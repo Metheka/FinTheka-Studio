@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-tema="claro">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="theme-color" content="#f6f7f6">
+        <meta name="description" content="Seu dinheiro, sob seu controle. Organize receitas, despesas e explore o mercado com o FinTheka Studio.">
+        <link rel="icon" type="image/svg+xml" href="logo.svg">
+        <script src="theme-init.js"></script>
+        <link rel="stylesheet" href="Studio.css">
+        <link rel="stylesheet" href="Simulador.css">
+        <link rel="stylesheet" href="NovosRecursos.css">
+        <link rel="stylesheet" href="Profissional.css">
+        <title>FinTheka Studio · Seu espaço financeiro</title>
+    </head>
+    <body class="auth-pendente" data-view="inicio">
+        <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+        <div id="auth-screen" class="auth">
+            <aside class="auth__showcase">
+                <div class="auth__brand">
+                    <img src="logo.svg" width="38" height="42" alt="">
+                    <span class="brand-name">fintheka<span class="brand-studio">Finance Studio</span>
+                    </span>
+                </div>
+                <div class="auth__headline">
+                    <p class="eyebrow">UM NOVO OLHAR PARA SUAS FINANÇAS</p>
+                    <h2>Organize suas<br>finanças com<br>
+                        <span>mais clareza.</span>
+                    </h2>
+                    <p>Organize o presente, explore possibilidades e abra espaço para o que vem depois.</p>
+                </div>
+                <div class="auth__orbit"></div>
+                <img class="auth__sculpture" src="logo.svg" alt="" width="420" height="420">
+                <p class="auth__foot">FinTheka Studio · Clareza para ir além.</p>
+            </aside>
+            <div class="auth__form-side">
+                <form id="auth-form" class="auth__card" novalidate>
+                    <div class="auth__brand auth__mobile-brand">
+                        <img src="logo.svg" width="38" height="42" alt="">
+                        <span class="brand-name">fintheka<span class="brand-studio">Finance Studio</span>
+                        </span>
+                    </div>
+                    <div>
+                        <p class="auth__intro">Seu espaço financeiro está aqui.</p>
+                        <h1 class="auth__titulo" id="auth-titulo">Entrar</h1>
+                    </div>
+                    <label id="auth-nome-label" hidden>Como podemos te chamar?<input id="auth-nome" type="text" placeholder="Seu nome" maxlength="100" autocomplete="name">
+                    </label>
+                    <label id="auth-email-label">E-mail<input id="auth-email" type="email" placeholder="voce@exemplo.com" maxlength="254" autocomplete="email" inputmode="email">
+                    </label>
+                    <label id="auth-senha-label">Senha<input id="auth-senha" type="password" placeholder="Sua senha" maxlength="72" autocomplete="current-password">
+                    </label>
+                    <button class="btn btn--primary" id="auth-enviar" type="submit">Entrar</button>
+                    <p class="auth__msg" id="auth-msg" role="alert"></p>
+                    <div class="auth__links">
+                        <a href="#" id="auth-trocar">Criar conta</a>
+                        <a href="#" id="auth-esqueci">Esqueci a senha</a>
+                    </div>
+                </form>
+                <p class="auth__privacy">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#lock"/>
+                    </svg>
+                    <span>Sua conta é pessoal. Nunca compartilhe sua senha ou códigos de acesso. <a href="privacidade.html">Privacidade e seus dados</a>.</span>
+                </p>
+            </div>
+        </div>
+        <button id="menu-fundo" class="menu-fundo" aria-label="Fechar menu" hidden></button>
+        <aside class="sidebar" id="menu-lateral" aria-label="Navegação principal">
+            <a class="sidebar__brand" href="#inicio" data-open-view="inicio" aria-label="FinTheka Studio, visão geral">
+                <img src="logo.svg" width="38" height="42" alt="">
+                <span class="brand-name">fintheka<span class="brand-studio">Finance Studio</span>
+                </span>
+            </a>
+            <div class="sidebar__workspace">
+                <span class="workspace-mark">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#wallet"/>
+                    </svg>
+                </span>
+                <div>Meu espaço<small>Finanças pessoais</small>
+                </div>
+            </div>
+            <nav class="sidebar__nav" aria-label="Telas do Studio">
+                <p class="nav-label">Principal</p>
+                <a href="#inicio" class="sidebar__link sidebar__link--active" data-view="inicio" aria-current="page">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#grid"/>
+                    </svg>
+                    <span>Visão geral</span>
+                </a>
+                <a href="#transacoes" class="sidebar__link" data-view="transacoes">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#transactions"/>
+                    </svg>
+                    <span>Transações</span>
+                </a>
+                <a href="#porquinho" class="sidebar__link" data-view="porquinho"><svg class="icon" aria-hidden="true"><use href="icons.svg#piggy"/></svg><span>Porquinho</span></a>
+                <a href="#ia" class="sidebar__link" data-view="ia"><svg class="icon" aria-hidden="true"><use href="icons.svg#sparkles"/></svg><span>Assistente IA</span></a>
+                <a href="#relatorios" class="sidebar__link" data-view="relatorios">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#chart"/>
+                    </svg>
+                    <span>Relatórios</span>
+                </a>
+                <a href="#contatos" class="sidebar__link" data-view="contatos">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#users"/>
+                    </svg>
+                    <span>Contatos</span>
+                </a>
+                <p class="nav-label">Ferramentas</p>
+                <a href="#mercado" class="sidebar__link" data-view="mercado">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#candles"/>
+                    </svg>
+                    <span>Mercado</span>
+                </a>
+                <a href="#estatisticas" class="sidebar__link" data-view="estatisticas">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#globe"/>
+                    </svg>
+                    <span>Cotações</span>
+                </a>
+                <a href="#investimentos" class="sidebar__link" data-view="investimentos">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#growth"/>
+                    </svg>
+                    <span>Simulador</span>
+                </a>
+                <a href="#importacoes" class="sidebar__link" data-view="importacoes">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#upload"/>
+                    </svg>
+                    <span>Importações</span>
+                </a>
+                <a href="#admin" class="sidebar__link" data-view="admin" id="link-admin" hidden>
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#shield"/>
+                    </svg>
+                    <span>Administração</span>
+                </a>
+            </nav>
+            <div class="sidebar__search">
+                <input type="search" id="busca-lateral" placeholder="Buscar transações" aria-label="Buscar transações no menu">
+            </div>
+            <div class="sidebar__cotacao" id="cotacao-box">
+                <p class="sidebar__cotacao-title">Câmbio · em reais</p>
+                <p class="sidebar__cotacao-row">
+                    <span>USD <span class="muted">/ BRL</span>
+                    </span>
+                    <strong id="cotacao-usd">--</strong>
+                </p>
+                <p class="sidebar__cotacao-row">
+                    <span>EUR <span class="muted">/ BRL</span>
+                    </span>
+                    <strong id="cotacao-eur">--</strong>
+                </p>
+            </div>
+            <div class="sidebar__profile">
+                <span class="sidebar__avatar" id="perfil-avatar">?</span>
+                <div>
+                    <p class="sidebar__profile-name" id="perfil-nome">--</p>
+                    <p class="sidebar__profile-email" id="perfil-email"></p>
+                </div>
+            </div>
+            <div class="sidebar__footer" hidden>
+                <span id="rodape-avatar"></span>
+                <span id="rodape-nome"></span>
+                <span id="rodape-papel"></span>
+                <span id="rodape-valor"></span>
+            </div>
+        </aside>
+        <div class="content">
+            <header class="topbar">
+                <button class="topbar__icon-btn menu-mobile" id="btn-menu" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu-lateral">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#menu"/>
+                    </svg>
+                </button>
+                <div class="topbar__breadcrumb">
+                    <p class="breadcrumb-workspace">Meu espaço</p>
+                    <span>/</span>
+                    <h1 class="topbar__title" id="topbar-titulo">Visão geral</h1>
+                </div>
+                <div class="topbar__search">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#search"/>
+                    </svg>
+                    <input type="search" id="busca-topo" placeholder="Buscar transações..." aria-label="Buscar transações">
+                </div>
+                <button class="topbar__icon-btn" id="btn-ajuda" aria-label="Abrir ajuda" title="Ajuda">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#help"/>
+                    </svg>
+                </button>
+                <button class="topbar__icon-btn" id="btn-tema" aria-label="Alternar tema claro/escuro" title="Alternar tema">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#sun"/>
+                    </svg>
+                </button>
+                <button class="btn btn--primary" id="btn-nova-transacao" aria-label="Adicionar transação">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#plus"/>
+                    </svg> Adicionar</button>
+                <button class="btn btn--ghost" id="btn-sair">Sair</button>
+            </header>
+            <div class="assistant-toolbar"><button type="button" id="atalho-ia-topo" class="assistant-shortcut" data-open-view="ia" data-focus="ia-pergunta"><span class="assistant-shortcut__icon"><svg class="icon" aria-hidden="true"><use href="icons.svg#sparkles"/></svg></span><span><strong>Conversar com a IA</strong><small>Seu assistente financeiro</small></span></button></div>
+            <main class="main" id="conteudo" tabindex="-1">
+                <section class="view view--active" id="view-inicio" data-view-content="inicio" aria-labelledby="overview-title">
+                    <div class="view-intro">
+                        <div>
+                            <p class="view-intro__eyebrow" id="saudacao">SEU ESPAÇO FINANCEIRO</p>
+                            <h2 id="overview-title">Visão geral</h2>
+                            <p class="intro-copy">Saldos, movimentações e despesas do mês.</p>
+                        </div>
+                        <div class="date-chip">
+                            <svg class="icon " aria-hidden="true">
+                                <use href="icons.svg#calendar"/>
+                            </svg>
+                            <time id="data-painel"></time>
+                        </div>
+                    </div>
+                    <div class="overview-grid">
+                        <section class="panel portfolio-card" aria-labelledby="portfolio-title">
+                            <div class="portfolio-card__top">
+                                <p class="portfolio-card__label" id="portfolio-title">
+                                    <svg class="icon " aria-hidden="true">
+                                        <use href="icons.svg#wallet"/>
+                                    </svg> Saldo atual</p>
+                                <span class="badge">Todo o histórico</span>
+                            </div>
+                            <p class="overview-balance" id="overview-saldo">R$ --</p>
+                            <p class="portfolio-caption">Receitas recebidas menos despesas pagas.</p>
+                            <div class="portfolio-card__toolbar">
+                                <p>Evolução do saldo confirmado</p>
+                                <div class="period-switch" role="group" aria-label="Período do gráfico">
+                                    <button data-chart-days="7" aria-pressed="false">7D</button>
+                                    <button data-chart-days="30" aria-pressed="true">30D</button>
+                                    <button data-chart-days="90" aria-pressed="false">90D</button>
+                                </div>
+                            </div>
+                            <div id="balance-chart" class="balance-chart" role="img" aria-label="Carregando evolução do saldo">
+                                <div class="chart-empty">Carregando seu histórico...</div>
+                            </div>
+                            <div class="chart-labels" id="chart-labels"></div>
+                            <div id="overview-saldo-evolucao" class="balance-readout" hidden></div>
+                        </section>
+                        <div class="metrics-stack">
+                            <section class="panel metric">
+                                <div class="metric__top">
+                                    <p>Receitas do mês</p>
+                                    <span class="metric__icon">
+                                        <svg class="icon " aria-hidden="true">
+                                            <use href="icons.svg#income"/>
+                                        </svg>
+                                    </span>
+                                </div>
+                                <p class="metric__value" id="overview-receitas">R$ --</p>
+                                <p class="metric__note" id="overview-recebido">Carregando...</p>
+                                <div id="overview-receitas-chart" class="metric-chart"></div>
+                            </section>
+                            <section class="panel metric">
+                                <div class="metric__top">
+                                    <p>Despesas do mês</p>
+                                    <span class="metric__icon metric__icon--red">
+                                        <svg class="icon " aria-hidden="true">
+                                            <use href="icons.svg#expense"/>
+                                        </svg>
+                                    </span>
+                                </div>
+                                <p class="metric__value" id="overview-despesas">R$ --</p>
+                                <p class="metric__note" id="overview-pago">Carregando...</p>
+                                <div id="overview-despesas-chart" class="metric-chart"></div>
+                            </section>
+                            <section class="panel metric">
+                                <div class="metric__top">
+                                    <p>Pendências do mês</p>
+                                    <span class="metric__icon metric__icon--blue">
+                                        <svg class="icon " aria-hidden="true">
+                                            <use href="icons.svg#clock"/>
+                                        </svg>
+                                    </span>
+                                </div>
+                                <p class="metric__value" id="overview-pendentes">--</p>
+                                <p class="metric__note">Transações a receber ou pagar</p>
+                                <div id="overview-pagamentos-chart" class="metric-chart"></div>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="home-analysis-grid"><section class="panel panel--pad"><div class="section-heading"><div><h3>Receitas e despesas por mês</h3><p>Últimos seis meses · lançamentos pagos e pendentes.</p></div></div><div id="home-fluxo-mensal"></div><p class="analytics-note">O mês atual é parcial. Consulte cada mês pelos botões do gráfico.</p></section><section class="panel panel--pad home-market-panel"><div class="section-heading"><div><h3>Mercado · USD/BRL</h3><p>Fechamentos diários do dólar em reais.</p></div><button type="button" id="home-market-atualizar" class="btn btn--outline btn--small">Atualizar</button></div><strong id="home-market-valor" class="home-market-price">--</strong><p id="home-market-variacao" class="home-market-change"></p><div id="home-market-chart" class="home-market-chart">O histórico será carregado ao abrir a visão geral.</div><p id="home-market-periodo" class="analytics-note"></p><button type="button" class="link-button" data-open-view="mercado">Abrir mercado completo</button></section></div>
+                    <section aria-labelledby="explore-title">
+                        <div class="section-heading">
+                            <h3 id="explore-title">Ferramentas</h3>
+                            <span class="eyebrow">Explore o Studio</span>
+                        </div>
+                        <div class="feature-rail">
+                            <button class="feature-card feature-card--ai" data-open-view="ia" data-focus="ia-pergunta">
+                                <span class="feature-card__tag">
+                                    <svg class="icon " aria-hidden="true">
+                                        <use href="icons.svg#sparkles"/>
+                                    </svg> Inteligência artificial</span>
+                                <h3>Assistente IA</h3>
+                                <p>Converse sobre seu orçamento e suas metas.</p>
+                                <svg class="icon feature-card__art" aria-hidden="true">
+                                    <use href="icons.svg#sparkles"/>
+                                </svg>
+                            </button>
+                            <button class="feature-card feature-card--market" data-open-view="mercado">
+                                <span class="feature-card__tag">
+                                    <svg class="icon " aria-hidden="true">
+                                        <use href="icons.svg#candles"/>
+                                    </svg> Mercado</span>
+                                <h3>Mercado de câmbio</h3>
+                                <p>Explore câmbio e gráficos diários.</p>
+                                <svg class="icon feature-card__art" aria-hidden="true">
+                                    <use href="icons.svg#candles"/>
+                                </svg>
+                            </button>
+                            <button class="feature-card feature-card--invest" data-open-view="investimentos">
+                                <span class="feature-card__tag">
+                                    <svg class="icon " aria-hidden="true">
+                                        <use href="icons.svg#chart"/>
+                                    </svg> Planejamento</span>
+                                <h3>Simulador</h3>
+                                <p>Simule seus próximos objetivos.</p>
+                            </button>
+                        </div>
+                    </section>
+                    <div class="overview-bottom">
+                        <section class="panel panel--pad">
+                            <div class="section-heading">
+                                <div>
+                                    <h3>Últimos movimentos</h3>
+                                    <p>Seu histórico, sem perder o ritmo.</p>
+                                </div>
+                                <button class="link-button" data-open-view="transacoes">Ver todos</button>
+                            </div>
+                            <div id="overview-recentes" class="recent-list">
+                                <p class="muted">Carregando...</p>
+                            </div>
+                        </section>
+                        <section class="panel panel--pad">
+                            <div class="section-heading">
+                                <div>
+                                    <h3>Onde você gastou</h3>
+                                    <p>Despesas cadastradas neste mês.</p>
+                                </div>
+                            </div>
+                            <div id="overview-categorias">
+                                <p class="muted">Carregando...</p>
+                            </div>
+                        </section>
+                    </div>
+                </section>
+                <section class="view" id="view-transacoes" data-view-content="transacoes">
+                    <div class="view-intro">
+                        <div>
+                            <p class="view-intro__eyebrow">Seu dinheiro em movimento</p>
+                            <h2>Transações</h2>
+                            <p class="intro-copy">Organize receitas, despesas e pagamentos. Sem perder nenhum detalhe.</p>
+                        </div>
+                    </div>
+                    <section class="summary">
+                        <div class="card card--result">
+                            <p class="card__label">Resultado previsto no período</p>
+                            <p class="card__value" id="resultado-previsto">R$0,00</p>
+                            <div class="summary__split">
+                                <div class="summary__item">
+                                    <p class="summary__item-label">Recebimentos</p>
+                                    <div class="progress progress--green">
+                                        <span style="width: 100%">100,00%</span>
+                                    </div>
+                                    <p class="summary__item-row">
+                                        <span>Recebido</span>
+                                        <strong class="text-green"
+                                        id="total-recebido">R$0,00</strong>
+                                </p>
+                                <p class="summary__item-row">
+                                    <span>Previsto</span>
+                                    <strong
+                                    id="total-previsto">R$0,00</strong>
+                            </p>
+                        </div>
+                        <div class="summary__item">
+                            <p class="summary__item-label">Despesas</p>
+                            <div class="progress progress--red">
+                                <span style="width: 0%">0,00%</span>
+                            </div>
+                            <p class="summary__item-row">
+                                <span>Pago</span>
+                                <strong
+                                class="text-red" id="despesas-pagas">R$0,00</strong>
+                        </p>
+                        <p class="summary__item-row">
+                            <span>Previsto</span>
+                            <strong id="despesas-previstas">R$0,00</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="card card--balance">
+                <p class="card__label">Saldo atual</p>
+                <p class="card__value text-green" id="saldo-atual">R$0,00</p>
+                <p class="card__sublabel">Resultado do período: <span id="previsao-mes">R$0,00</span>
+                </p>
+                <p class="card__account">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#wallet"/>
+                    </svg> Todos os pagamentos confirmados</p>
+            </div>
+        </section>
+        <section class="panel panel--insights">
+            <div class="insights__header">
+                <p class="insights__title">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#sparkles"/>
+                    </svg> Seu radar financeiro <span class="ai-tag">IA</span>
+                </p>
+                <button class="btn btn--ghost" id="btn-gerar-insight">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#sparkles"/>
+                    </svg> Gerar insight</button>
+            </div>
+            <p class="insights__texto" id="insight-texto" role="status" aria-live="polite" aria-atomic="true">
+                Clique em "Gerar insight" para analisar até 200 transações recentes.
+            </p>
+            <p class="insights__aviso">Ao gerar, você envia à Groq somente totais de receitas, despesas, pagamentos e a quantidade de registros, sem nomes ou descrições. Até 3 análises por conta em 24 horas, sujeitas à cota do site e do provedor. A IA pode errar; confira os valores.</p>
+        </section>
+        <section class="panel transactions-panel">
+            <div class="section-heading transactions-heading">
+                <div>
+                    <h3>Suas transações</h3>
+                    <p>Filtre o período e encontre o que precisa.</p>
+                </div>
+            </div>
+            <div class="tabs">
+                <label>Tipo <select id="filtro-tipo" aria-label="Tipo de transação">
+                        <option value="todos">Receitas e despesas</option>
+                        <option value="receitas">Receitas</option>
+                        <option value="despesas">Despesas</option>
+                    </select>
+                </label>
+            </div>
+            <div class="filters">
+                <select id="filtro-categoria" aria-label="Filtrar por categoria"><option value="">Todas as categorias</option></select>
+                <select id="filtro-periodo" aria-label="Período">
+                    <option value="mes">Este mês</option>
+                    <option value="todos">Todo o histórico</option>
+                </select>
+                <select id="filtro-status" aria-label="Pagamento">
+                    <option value="todos">Todos os pagamentos</option>
+                    <option value="pago">Pagos</option>
+                    <option value="pendente">Pendentes</option>
+                </select>
+                <button class="btn btn--ghost" id="btn-recarregar">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#refresh"/>
+                    </svg> Atualizar</button>
+                <button class="btn btn--ghost" id="btn-nova-transacao-2">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#plus"/>
+                    </svg> Nova transação</button>
+            </div>
+            <div class="table-wrapper">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Descrição</th>
+                            <th>Contato</th>
+                            <th>Categoria</th>
+                            <th>Valor</th>
+                            <th>Pagamento</th>
+                            <th>Pago?</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-corpo">
+                        <tr>
+                            <td colspan="8">Carregando transações...</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4">Total de todas as transações filtradas</td>
+                            <td class="text-green" id="tabela-total">R$0,00</td>
+                            <td colspan="3"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="pagination">
+                <p id="paginacao-info" role="status" aria-live="polite">Carregando...</p>
+                <div>
+                    <button class="btn btn--ghost btn--small" id="pagina-anterior" disabled>Anterior</button>
+                    <button class="btn btn--ghost btn--small" id="proxima-pagina" disabled>Próxima</button>
+                </div>
+            </div>
+        </section>
+    </section>
+    <!-- ============================================= -->
+    <!-- VIEW: RELATÓRIOS                               -->
+    <!-- ============================================= -->
+    <section class="view" id="view-relatorios" data-view-content="relatorios">
+        <div class="view-intro">
+            <div>
+                <p class="view-intro__eyebrow">Do detalhe à visão completa</p>
+                <h2>Relatórios financeiros</h2>
+                <p class="intro-copy">Composição das despesas, fluxo mensal e resultados por categoria.</p>
+            </div>
+        </div>
+        <div class="analytics-panels"><section class="panel panel--pad"><div class="section-heading"><div><h3>Composição das despesas</h3><p>Todo o histórico cadastrado, incluindo pendências.</p></div></div><div id="relatorio-composicao"></div></section><section class="panel panel--pad"><div class="section-heading"><div><h3>Receitas e despesas</h3><p>Últimos seis meses · lançamentos pagos e pendentes.</p></div></div><div id="relatorio-fluxo"></div><p class="analytics-note">O mês atual é parcial. Valores cadastrados não equivalem ao saldo confirmado.</p></section></div>
+        <section class="panel panel--pad">
+            <p class="panel__titulo">Resultado por categoria</p>
+            <div id="relatorios-lista" class="report-list">
+                <p>Carregando...</p>
+            </div>
+        </section>
+        <section class="panel panel--pad">
+            <p class="panel__titulo">Resultado por contato</p>
+            <div id="relatorios-clientes" class="report-list">
+                <p>Carregando...</p>
+            </div>
+        </section>
+    </section>
+    <!-- ============================================= -->
+    <!-- VIEW: CONTATOS                                 -->
+    <!-- ============================================= -->
+    <section class="view" id="view-contatos" data-view-content="contatos">
+        <div class="view-intro">
+            <div>
+                <p class="view-intro__eyebrow">Sua rede financeira</p>
+                <h2>Contatos</h2>
+                <p class="intro-copy">Seus contatos, organizados a partir das movimentações cadastradas.</p>
+            </div>
+        </div>
+        <section class="panel panel--pad">
+            <p class="panel__titulo">Todos os contatos</p>
+            <div id="contatos-lista" class="contacts-list">
+                <p>Carregando...</p>
+            </div>
+        </section>
+    </section>
+    <!-- ============================================= -->
+    <!-- VIEW: ESTATÍSTICAS                             -->
+    <!-- ============================================= -->
+    <section class="view" id="view-estatisticas" data-view-content="estatisticas">
+        <div class="view-intro">
+            <div>
+                <p class="view-intro__eyebrow">De olho no mundo</p>
+                <h2>Cotações</h2>
+                <p class="intro-copy">Acompanhe moedas internacionais e a variação informada pelo provedor.</p>
+            </div>
+        </div>
+        <section class="panel panel--pad">
+            <div class="insights__header">
+                <p class="panel__titulo">Cotação das principais moedas</p>
+                <button class="btn btn--ghost" id="btn-atualizar-cotacoes">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#refresh"/>
+                    </svg> Atualizar</button>
+            </div>
+            <div id="moedas-grid" class="currency-grid">
+                <p>Carregando cotações...</p>
+            </div>
+        </section>
+    </section>
+    <!-- ============================================= -->
+    <!-- VIEW: IMPORTAÇÕES                              -->
+    <!-- ============================================= -->
+    <section class="view" id="view-importacoes" data-view-content="importacoes">
+        <div class="view-intro">
+            <div>
+                <p class="view-intro__eyebrow">Menos trabalho manual</p>
+                <h2>Seu histórico merece estar aqui.</h2>
+                <p class="intro-copy">Traga suas transações de uma planilha e continue de onde parou.</p>
+            </div>
+        </div>
+        <section class="panel panel--pad">
+            <p class="panel__titulo">Importar transações via CSV</p>
+            <p class="panel__subtitulo">Importe até 500 transações por arquivo. Sua conta comporta até 10.000 transações, com limites de gravação. Valores negativos são despesas; positivos são receitas.</p>
+            <div class="upload-zone">
+                <svg class="icon " aria-hidden="true">
+                    <use href="icons.svg#upload"/>
+                </svg>
+                <label for="input-csv">Escolha sua planilha em CSV</label>
+                <p>Arquivo .csv · até 1 MB · separado por vírgula ou ponto e vírgula</p>
+                <input type="file" id="input-csv" accept=".csv,text/csv" class="import-input">
+            </div>
+            <div class="import-actions">
+                <button class="btn btn--primary" id="btn-importar-csv">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#upload"/>
+                    </svg> Importar arquivo</button>
+                <button class="btn btn--ghost" id="btn-modelo-csv">
+                    <svg class="icon " aria-hidden="true">
+                        <use href="icons.svg#download"/>
+                    </svg> Baixar modelo</button>
+            </div>
+            <div id="importacao-resultado" class="import-resultado" role="status" aria-live="polite"></div>
+            <div class="csv-guide">
+                <h3>Prepare o arquivo em poucos passos</h3>
+                <ol>
+                    <li>Use as seis colunas do modelo, na mesma ordem.</li>
+                    <li>Preencha a data como AAAA-MM-DD ou DD/MM/AAAA.</li>
+                    <li>Coloque valores negativos nas despesas. Todos os registros entram como pendentes.</li>
+                </ol>
+                <code class="csv-example">data;descricao;recebidoDe;categoria;valor;tipoPagamento
+                    2026-11-01;Pagamento de projeto;Cliente;Serviços;1500,00;Única
+                    2026-11-02;Internet;Operadora;Casa;-120,00;Mensal</code>
+            </div>
+        </section>
+    </section>
+    <!-- ============================================= -->
+    <!-- VIEW: INVESTIMENTOS                            -->
+    <!-- ============================================= -->
+    <section class="view" id="view-investimentos" data-view-content="investimentos">
+        <div class="view-intro">
+            <div>
+                <p class="view-intro__eyebrow">STUDIO / PLANEJAMENTO</p>
+                <h2>Seu futuro, em perspectiva.</h2>
+                <p class="intro-copy">Transforme hipóteses em um plano. Explore o impacto do tempo, dos aportes e das taxas.</p>
+            </div>
+            <button class="btn btn--outline" id="sim-exportar" type="button"><svg class="icon" aria-hidden="true"><use href="icons.svg#download"/></svg>Exportar projeção</button>
+        </div>
+        <div class="sim-layout">
+            <form class="panel invest-form sim-form" id="sim-form" novalidate>
+                <div class="sim-form__heading"><span class="workspace-mark"><svg class="icon" aria-hidden="true"><use href="icons.svg#growth"/></svg></span><div><h3>Desenhe seu plano</h3><p>Hipóteses editáveis</p></div><button class="sim-reset" id="sim-reset" type="button" title="Restaurar valores iniciais" aria-label="Restaurar valores iniciais"><svg class="icon" aria-hidden="true"><use href="icons.svg#refresh"/></svg></button></div>
+                <label>Capital inicial <span class="sim-input"><span>R$</span><input type="text" id="invest-valor-inicial" value="10.000,00" maxlength="24" inputmode="decimal" required></span></label>
+                <label>Aporte mensal <span class="sim-input"><span>R$</span><input type="text" id="invest-aporte" value="500,00" maxlength="24" inputmode="decimal" required></span></label>
+                <div class="sim-field"><label for="invest-taxa">Rentabilidade estimada</label><div class="sim-pair"><span class="sim-input"><input type="number" id="invest-taxa" aria-describedby="sim-taxa-equivalente" value="10" min="-90" max="100" step="any" required><span>%</span></span><select id="sim-unidade-taxa" aria-label="Periodicidade da rentabilidade"><option value="anual">ao ano</option><option value="mensal">ao mês</option></select></div><p class="sim-hint" id="sim-taxa-equivalente"></p></div>
+                <div class="sim-field"><label for="invest-meses">Horizonte de tempo</label><div class="sim-pair"><input type="number" id="invest-meses" value="10" min="1" max="50" step="any" required><select id="sim-unidade-prazo" aria-label="Unidade do prazo"><option value="anos">anos</option><option value="meses">meses</option></select></div><div class="sim-presets" role="group" aria-label="Prazos rápidos"><button type="button" data-sim-years="5">5 anos</button><button type="button" data-sim-years="10" aria-pressed="true">10 anos</button><button type="button" data-sim-years="20">20 anos</button></div></div>
+                <details class="sim-advanced"><summary>Ajustes do planejamento<span>Inflação, custos e aportes</span></summary><div class="sim-advanced__fields">
+                    <label>Inflação estimada (% ao ano)<input type="number" id="sim-inflacao" value="4.5" min="0" max="50" step="any" required></label>
+                    <label>Custo sobre o saldo (% ao ano)<input type="number" id="sim-custos" value="0" min="0" max="20" step="any" required></label>
+                    <label>Reajuste do aporte (% ao ano)<input type="number" id="sim-reajuste" value="0" min="0" max="50" step="any" required></label>
+                    <label>Quando você aporta<select id="sim-momento"><option value="fim">No fim de cada mês</option><option value="inicio">No início de cada mês</option></select></label>
+                    <label>Meta de saldo nominal (R$)<input type="text" id="sim-meta" value="100.000,00" maxlength="24" inputmode="decimal"><span class="sim-hint">Use zero para simular sem uma meta.</span></label>
+                    <label>Variação dos cenários (p.p. ao ano)<input type="number" id="sim-variacao" value="2" min="0" max="20" step="any" required></label>
+                </div></details>
+                <button class="btn btn--primary" id="btn-calcular-investimento" type="submit"><svg class="icon" aria-hidden="true"><use href="icons.svg#chart"/></svg>Atualizar simulação</button>
+                <p class="sim-local"><svg class="icon" aria-hidden="true"><use href="icons.svg#lock"/></svg>Cálculo no seu navegador. Não altera sua conta.</p>
+            </form>
+            <div class="sim-results">
+                <div class="sim-status" id="sim-status" role="status" aria-live="polite">Preparando projeção...</div>
+                <div class="invest-resultado sim-kpis" id="invest-resultado" aria-label="Resultado da simulação"></div>
+                <section class="panel sim-chart-panel" id="sim-chart-panel" aria-labelledby="sim-evolucao-title">
+                    <div class="section-heading"><div><p class="eyebrow">O TEMPO TRABALHANDO NO SEU PLANO</p><h3 id="sim-evolucao-title">Evolução do patrimônio</h3></div><div class="period-switch" role="group" aria-label="Valores do gráfico"><button type="button" data-sim-view="nominal" aria-pressed="true">Nominal</button><button type="button" data-sim-view="real" aria-pressed="false">Poder de compra</button></div></div>
+                    <div class="sim-chart-legend"><span class="sim-dot sim-dot--base">Cenário base</span><span class="sim-dot sim-dot--aporte" id="sim-aporte-legenda">Total investido</span><span class="sim-dot sim-dot--band">Faixa de cenários</span></div>
+                    <div id="invest-chart" class="sim-chart" role="group" aria-label="Evolução do saldo simulado"></div>
+                    <p class="sim-chart-foot" id="sim-chart-foot"></p>
+                </section>
+                <section class="panel sim-goal" id="sim-goal" aria-label="Sua meta"></section>
+                <section class="sim-scenarios" id="sim-scenarios" aria-label="Comparação de cenários"></section>
+            </div>
+        </div>
+        <section class="panel sim-table-panel" id="sim-table-panel" aria-labelledby="sim-detalhes-title"><div class="section-heading"><div><h3 id="sim-detalhes-title">Seu plano, em detalhe</h3><p>Composição do cenário base em cada período.</p></div><select id="sim-tabela-periodo" aria-label="Agrupamento da projeção"><option value="anual">Por ano</option><option value="mensal">Por mês</option></select></div><div class="table-wrapper"><table class="table sim-table"><thead><tr><th scope="col">Período</th><th scope="col">Aporte no período</th><th scope="col">Juros no período</th><th scope="col">Custos no período</th><th scope="col">Saldo nominal</th><th scope="col">Poder de compra</th></tr></thead><tbody id="sim-tabela-corpo"></tbody></table></div><div class="pagination"><p id="sim-paginacao-info" role="status"></p><div><button class="btn btn--ghost btn--small" type="button" id="sim-anterior">Anterior</button><button class="btn btn--ghost btn--small" type="button" id="sim-proxima">Próxima</button></div></div></section>
+        <details class="panel sim-method"><summary>Como calculamos sua projeção</summary><div><p>Usamos juros compostos com taxas efetivas: a taxa anual é convertida pela raiz de 12, e a mensal pela capitalização de 12 meses. Os aportes podem entrar no início ou no fim de cada mês. Seu reajuste ocorre a partir do mês 13 e a cada 12 meses.</p><p>O custo anual representa uma redução percentual equivalente sobre o saldo, distribuída mensalmente após os juros e antes do aporte de fim de mês. O poder de compra divide o saldo pela inflação acumulada desde hoje. A meta é nominal e considera o primeiro mês em que o saldo alcança o valor escolhido.</p><p>Os cenários variam a taxa anual efetiva pela quantidade de pontos percentuais informada. São hipóteses matemáticas, sem probabilidade associada. Inflação, custos e retornos são constantes na simulação. Não incluímos impostos, IOF, carência, risco de crédito ou liquidez de produtos específicos.</p><p>Todos os valores são hipotéticos, editáveis e não representam taxas atuais ou garantia de rendimento. Referência de capitalização: <a href="https://www3.bcb.gov.br/CALCIDADAO/publico/exibirMetodologiaAplicacaoDepositosRegulares.do?method=exibirMetodologiaAplicacaoDepositosRegulares" target="_blank" rel="noopener noreferrer">metodologia de depósitos regulares do Banco Central</a>. A opção de aporte inicial de cada mês corresponde ao momento considerado nessa metodologia.</p></div></details>
+    </section>
+    <section class="view" id="view-admin" data-view-content="admin">
+        <div class="view-intro">
+            <div>
+                <p class="view-intro__eyebrow">Gestão do espaço</p>
+                <h2>Tudo sob acompanhamento.</h2>
+                <p class="intro-copy">Consulte os usuários e o resumo financeiro da plataforma.</p>
+            </div>
+        </div>
+        <section class="panel panel--pad">
+            <p class="panel__titulo">Usuários</p>
+            <div class="table-wrapper">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>E-mail</th>
+                            <th>Papel</th>
+                            <th>Transações</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-corpo">
+                        <tr>
+                            <td colspan="5">Carregando...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </section>
+    <section class="view" id="view-mercado" data-view-content="mercado">
+        <div class="view-intro">
+            <div>
+                <p class="view-intro__eyebrow">Seu terminal de moedas</p>
+                <h2>Mercado de câmbio</h2>
+                <p class="intro-copy">Explore o histórico de câmbio, velas diárias e médias móveis.</p>
+            </div>
+        </div>
+        <section class="panel panel--pad">
+            <div class="mercado__topo">
+                <select id="mercado-par" aria-label="Moeda">
+                    <option value="USD">USD · Dólar americano</option>
+                    <option value="EUR">EUR · Euro</option>
+                    <option value="GBP">GBP · Libra esterlina</option>
+                    <option value="JPY">JPY · Iene japonês</option>
+                    <option value="CHF">CHF · Franco suíço</option>
+                    <option value="CAD">CAD · Dólar canadense</option>
+                    <option value="AUD">AUD · Dólar australiano</option>
+                    <option value="CNY">CNY · Yuan chinês</option>
+                    <option value="ARS">ARS · Peso argentino</option>
+                </select>
+                <select id="mercado-dias" aria-label="Período">
+                    <option value="30">30 dias</option>
+                    <option value="90" selected>90 dias</option>
+                    <option value="180">180 dias</option>
+                </select>
+                <div class="mercado__preco">
+                    <strong id="mercado-ultimo">--</strong>
+                    <span id="mercado-var"></span>
+                </div>
+            </div>
+            <p class="mercado__legenda">
+                <span>Média 7 dias</span>
+                <span>Média 21 dias</span>
+            </p>
+            <div id="mercado-grafico" class="mercado__grafico"></div>
+            <p class="panel__subtitulo">Velas diárias: a abertura é o fechamento do dia anterior. Dados informativos, não são recomendação de investimento. Gráficos com <a href="https://www.tradingview.com/" target="_blank" rel="noopener noreferrer">TradingView Lightweight Charts™</a>.</p>
+        </section>
+        <section class="panel panel--pad"><div class="section-heading"><div><h3>Oscilação diária do câmbio</h3><p>Variação do fechamento em relação ao dia anterior.</p></div></div><div id="mercado-oscilacao">Selecione uma moeda para consultar suas oscilações.</div><p class="analytics-note">Variações históricas observadas não são uma previsão de risco ou de retorno.</p></section>
+    </section>
+    <section class="view" id="view-porquinho" data-view-content="porquinho">
+        <div class="view-intro"><div><p class="view-intro__eyebrow">DE POUCO EM POUCO, VOCÊ CHEGA LÁ</p><h2>Seu próximo sonho começa aqui.</h2><p class="intro-copy">Crie um porquinho para cada plano e acompanhe sua economia.</p></div><button type="button" class="btn btn--primary" id="cofrinho-novo"><svg class="icon" aria-hidden="true"><use href="icons.svg#plus"/></svg>Criar porquinho</button></div>
+        <div class="piggy-summary panel panel--pad"><span class="piggy-mark"><svg class="icon" aria-hidden="true"><use href="icons.svg#piggy"/></svg></span><div><p class="muted">Total registrado nos porquinhos</p><strong id="cofrinhos-total">--</strong><p id="cofrinhos-resumo" class="muted">Suas metas, no seu ritmo.</p></div></div>
+        <p class="piggy-explanation">Guarde o dinheiro no seu banco e registre aqui. O Porquinho não transfere valores, não gera rendimentos e não altera o saldo das suas transações.</p>
+        <div class="section-heading"><div><h3>Meus porquinhos</h3><p>Uma viagem, uma reserva ou aquele plano especial.</p></div><button type="button" id="cofrinhos-recarregar" class="btn btn--outline btn--small">Atualizar</button></div>
+        <p id="cofrinhos-status" class="feature-status" role="status" aria-live="polite">Carregando seus porquinhos...</p>
+        <div id="cofrinhos-lista" class="piggy-grid"></div>
+    </section>
+    <section class="view" id="view-ia" data-view-content="ia">
+        <div class="view-intro"><div><p class="view-intro__eyebrow">UM ESPAÇO PARA CONVERSAR</p><h2>Assistente IA</h2><p class="intro-copy">Tire dúvidas sobre organização financeira e pense nos próximos passos.</p></div><button type="button" id="ia-limpar" class="btn btn--outline">Nova conversa</button></div>
+        <div class="chat-layout"><section class="chat-panel panel" aria-label="Conversa com o assistente">
+            <div class="chat-heading"><span class="chat-avatar"><svg class="icon" aria-hidden="true"><use href="icons.svg#sparkles"/></svg></span><div><h3>FinTheka IA</h3><p>Clareza para organizar seus planos.</p></div></div>
+            <div id="ia-mensagens" class="chat-messages" role="log" aria-label="Mensagens da conversa" aria-live="polite"></div>
+            <div class="chat-suggestions" aria-label="Sugestões de perguntas"><button type="button" data-ia-pergunta="Como posso organizar melhor meu orçamento?">Organizar meu orçamento</button><button type="button" data-ia-pergunta="Como planejar uma reserva de emergência?">Planejar minha reserva</button><button type="button" data-ia-pergunta="Como definir uma meta de economia realista?">Definir uma meta</button></div>
+            <p id="ia-status" class="chat-status" role="status" aria-live="polite"></p>
+            <form id="ia-form" class="chat-composer"><label for="ia-pergunta">Sua mensagem</label><textarea id="ia-pergunta" rows="2" maxlength="400" placeholder="Escreva sua dúvida sobre orçamento ou metas..." required></textarea><div><span class="field-hint">Enter envia · Shift + Enter pula linha</span><button id="ia-enviar" class="btn btn--primary" type="submit">Enviar mensagem</button></div></form>
+        </section><aside class="chat-about panel panel--pad"><span class="chat-avatar"><svg class="icon" aria-hidden="true"><use href="icons.svg#shield"/></svg></span><h3>Você no controle.</h3><p>Ao enviar, sua mensagem e um resumo dos totais de até 200 transações recentes seguem para a Groq. O resumo automático não inclui nomes nem descrições. Evite digitar senhas e dados pessoais.</p><p>O histórico fica apenas nesta sessão e é apagado ao trocar de conta ou iniciar uma nova conversa. A IA pode errar: confira os valores.</p><p>Até 3 respostas por conta em 24 horas, compartilhadas com “Gerar insight”, com intervalo de 30 segundos e cota geral do site.</p><a class="link-button" href="privacidade.html">Privacidade e seus dados</a></aside></div>
+    </section>
+    <footer class="app-footer">
+        <span>© 2026 FinTheka Studio. No seu ritmo.</span>
+        <a href="privacidade.html">Privacidade e seus dados</a>
+        <span>
+            <svg class="icon " aria-hidden="true">
+                <use href="icons.svg#lock"/>
+            </svg> Seu espaço pessoal de finanças</span>
+    </footer>
+</main>
+<nav class="mobile-nav" aria-label="Navegação principal no celular">
+    <a href="#inicio" data-open-view="inicio" aria-current="page"><svg class="icon" aria-hidden="true"><use href="icons.svg#grid"/></svg><span>Início</span></a>
+    <a href="#transacoes" data-open-view="transacoes"><svg class="icon" aria-hidden="true"><use href="icons.svg#transactions"/></svg><span>Movimentos</span></a>
+    <a href="#porquinho" data-open-view="porquinho"><svg class="icon" aria-hidden="true"><use href="icons.svg#piggy"/></svg><span>Porquinho</span></a>
+    <a href="#ia" data-open-view="ia"><svg class="icon" aria-hidden="true"><use href="icons.svg#sparkles"/></svg><span>IA</span></a>
+</nav>
+</div>
+<dialog id="transacao-dialog" class="transacao-dialog" aria-labelledby="transacao-titulo">
+    <form id="transacao-form">
+        <div class="dialog-heading">
+            <h2 id="transacao-titulo">Nova transação</h2>
+            <span class="metric__icon">
+                <svg class="icon " aria-hidden="true">
+                    <use href="icons.svg#wallet"/>
+                </svg>
+            </span>
+        </div>
+        <p class="dialog-subtitle">Cada movimento no lugar certo. Organize do seu jeito.</p>
+        <div class="transaction-fields">
+            <label class="field-full">Descrição<input name="descricao" placeholder="Ex.: pagamento de um projeto" required maxlength="200" autocomplete="off">
+            </label>
+            <label>Tipo de lançamento<select name="tipo">
+                    <option value="receita">Receita</option>
+                    <option value="despesa">Despesa</option>
+                </select>
+            </label>
+            <label>Valor (R$)<input name="valor" inputmode="decimal" placeholder="0,00" required autocomplete="off">
+            </label>
+            <label>Data<input name="data" type="date" required>
+            </label>
+            <label><span id="transacao-contato-label">Recebido de</span><input name="recebidoDe" placeholder="Pessoa ou empresa (opcional)" maxlength="120">
+            </label>
+            <label>Forma de pagamento<span class="payment-control"><span id="pagamento-icone" aria-hidden="true"></span><select name="tipoPagamento">
+                <option>Pix</option><option>Cartão de débito</option><option>Cartão de crédito</option>
+                <option>Dinheiro</option><option>Transferência bancária</option><option>Boleto</option>
+                <option>Débito automático</option><option>Não informado</option>
+            </select></span>
+            </label>
+        </div>
+        <div class="payment-quick" role="group" aria-label="Formas de pagamento favoritas">
+            <button type="button" data-payment="Pix" aria-pressed="true"><span class="payment-quick__icon"></span><span>Pix</span></button>
+            <button type="button" data-payment="Cartão de crédito" aria-pressed="false"><span class="payment-quick__icon"></span><span>Crédito</span></button>
+            <button type="button" data-payment="Cartão de débito" aria-pressed="false"><span class="payment-quick__icon"></span><span>Débito</span></button>
+            <button type="button" data-payment="Dinheiro" aria-pressed="false"><span class="payment-quick__icon"></span><span>Dinheiro</span></button>
+        </div>
+        <section class="category-picker" aria-labelledby="categorias-titulo">
+            <div class="category-picker__heading"><h3 id="categorias-titulo">Categoria</h3><button id="categoria-criar" type="button" class="link-button">+ Criar categoria</button></div>
+            <input type="hidden" name="categoria" value="Outros">
+            <label class="category-search">Buscar categoria<input id="categoria-busca" type="search" placeholder="Ex.: alimentação, transporte…" autocomplete="off" maxlength="60"></label>
+            <div id="categorias-opcoes" class="category-options" role="group" aria-label="Escolher categoria"></div>
+            <p id="categoria-vazia" class="field-hint" hidden>Nenhuma categoria encontrada. Crie uma com o nome que preferir.</p>
+            <div class="category-picker__footer"><p>Selecionada: <strong id="categoria-selecionada">Outros</strong></p><button id="categorias-expandir" type="button" class="link-button" aria-expanded="false" aria-controls="categorias-opcoes">Ver todas</button></div>
+            <div id="categoria-editor" class="category-editor" hidden>
+                <label>Nome da nova categoria<input id="categoria-nova-nome" maxlength="60" placeholder="Ex.: Marmitas da semana" autocomplete="off" aria-describedby="categoria-erro categoria-aviso"></label>
+                <p id="categoria-aviso" class="field-hint">Ela fica salva junto à transação e aparece nos próximos lançamentos. Ao excluir a última transação dessa categoria, ela deixa de aparecer nas sugestões.</p>
+                <p id="categoria-erro" class="field-error" role="alert"></p>
+                <div class="category-editor__actions"><button type="button" id="categoria-cancelar" class="btn btn--ghost btn--small">Cancelar</button><button type="button" id="categoria-confirmar" class="btn btn--primary btn--small">Usar categoria</button></div>
+            </div>
+        </section>
+        <label class="transaction-status"><input name="pago" type="checkbox"><span><strong id="transacao-status-label">Já foi recebido</strong><small>Marque para incluir este valor no saldo confirmado.</small></span></label>
+        <p id="transacao-erro" role="alert"></p>
+        <div class="dialog-acoes">
+            <button type="button" id="transacao-cancelar" class="btn btn--outline">Cancelar</button>
+            <button type="submit" class="btn btn--primary">
+                <svg class="icon " aria-hidden="true">
+                    <use href="icons.svg#check"/>
+                </svg> Salvar transação</button>
+        </div>
+    </form>
+</dialog>
+<dialog id="cofrinho-dialog" class="transacao-dialog" aria-labelledby="cofrinho-titulo"><form id="cofrinho-form"><div class="dialog-heading"><h2 id="cofrinho-titulo">Criar porquinho</h2><span class="piggy-mark"><svg class="icon" aria-hidden="true"><use href="icons.svg#piggy"/></svg></span></div><p class="dialog-subtitle">Dê um nome ao seu plano e escolha a meta.</p><input type="hidden" name="id"><div class="piggy-fields"><label>Nome do porquinho<input name="nome" required maxlength="80" placeholder="Ex.: minha reserva de emergência"></label><label>Meta (R$)<input name="meta" required inputmode="decimal" placeholder="5.000,00" autocomplete="off"></label><label>Data da meta (opcional)<input name="prazo" type="date" min="0001-01-01" max="9999-12-31"></label><label>Cor do porquinho<select name="cor"><option value="rosa">Rosa</option><option value="verde">Verde</option><option value="violeta">Violeta</option><option value="ambar">Âmbar</option></select></label></div><p id="cofrinho-erro" class="field-error" role="alert"></p><div class="dialog-acoes"><button type="button" id="cofrinho-cancelar" class="btn btn--outline">Cancelar</button><button type="submit" class="btn btn--primary">Salvar porquinho</button></div></form></dialog>
+<dialog id="cofrinho-movimento-dialog" class="transacao-dialog" aria-labelledby="cofrinho-movimento-titulo"><form id="cofrinho-movimento-form"><h2 id="cofrinho-movimento-titulo">Guardar no porquinho</h2><p id="cofrinho-movimento-saldo" class="dialog-subtitle"></p><div class="piggy-fields"><label>Registro<select name="mov_tipo"><option value="guardar">Dinheiro guardado</option><option value="retirar">Dinheiro retirado</option></select></label><label>Valor (R$)<input name="mov_valor" required inputmode="decimal" placeholder="0,00" autocomplete="off"></label></div><p class="field-hint">Registre apenas o valor que você separou ou retirou no seu banco.</p><p id="cofrinho-movimento-erro" class="field-error" role="alert"></p><div class="dialog-acoes"><button type="button" id="cofrinho-movimento-cancelar" class="btn btn--outline">Fechar</button><button type="submit" class="btn btn--primary">Registrar valor</button></div></form><section class="piggy-history"><h3>Últimos 10 registros</h3><div id="cofrinho-historico"></div></section></dialog>
+<dialog id="help-dialog" class="help-dialog" aria-labelledby="help-title">
+    <div class="dialog-heading">
+        <h2 id="help-title">Seu guia FinTheka</h2>
+        <button class="topbar__icon-btn" id="help-close" aria-label="Fechar ajuda">
+            <svg class="icon " aria-hidden="true">
+                <use href="icons.svg#close"/>
+            </svg>
+        </button>
+    </div>
+    <div class="help-content">
+        <div>
+            <h3>Comece por um movimento</h3>
+            <p>Use Adicionar para cadastrar uma receita ou despesa. Escolha a categoria, a forma de pagamento e se o valor já foi recebido ou pago. Você também pode confirmar o pagamento depois, na tabela.</p>
+        </div>
+        <div>
+            <h3>Entenda seus números</h3>
+            <p>O saldo atual inclui todos os pagamentos confirmados. Na visão geral, receitas, despesas e pendências são do mês atual. Na tela de transações, os totais seguem os filtros escolhidos.</p>
+        </div>
+        <div>
+            <h3>Seu radar com inteligência artificial</h3>
+            <p>O insight analisa os totais de até 200 transações recentes. Os dados enviados, as cotas e os limites estão explicados junto ao botão Gerar insight. Confira sempre os valores.</p>
+        </div>
+        <div>
+            <h3>Traga seu histórico</h3>
+            <p>Em Importações, baixe o modelo CSV e preencha suas transações. Despesas levam sinal negativo. Relatórios e contatos consideram todo o histórico.</p>
+        </div>
+        <div>
+            <h3>Categorias do seu jeito</h3>
+            <p>Busque uma categoria ou use Criar categoria no formulário. A categoria própria fica salva junto à transação e pode ser reutilizada em novos lançamentos. No histórico, combine o filtro de categoria com período, tipo e pagamento. Ao excluir a última transação de uma categoria própria, ela deixa de aparecer nas sugestões.</p>
+        </div>
+    </div>
+    <button class="btn btn--primary" id="help-done">Entendi, vamos lá</button>
+</dialog>
+<div class="toast" id="app-toast" role="status" aria-live="polite" hidden>
+    <svg class="icon " aria-hidden="true">
+        <use href="icons.svg#check"/>
+    </svg>
+    <span id="app-toast-text"></span>
+</div>
+<script src="vendor/supabase.js" defer></script>
+<script src="config.js" defer></script>
+<script src="vendor/lightweight-charts.js" defer></script>
+<script src="Auth.js" defer></script>
+<script src="Pagamentos.js" defer></script>
+<script src="Categorias.js" defer></script>
+<script src="Porquinho.js" defer></script>
+<script src="Assistente.js" defer></script>
+<script src="Analises.js" defer></script>
+<script src="PainelGraficos.js" defer></script>
+    <script src="SimuladorCore.js" defer></script>
+    <script src="Simulador.js" defer></script>
+    <script src="Automac.js" defer></script>
+<script src="Extras.js" defer></script>
+<script src="Studio.js" defer></script>
+</body>
+</html>

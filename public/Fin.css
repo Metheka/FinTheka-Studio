@@ -1,0 +1,1110 @@
+/* =============================================================
+    FIN MATSS STUDIO — FOLHA DE ESTILOS
+    Dashboard financeiro inspirado em telas de gestão de transações.
+
+    Índice:
+    1.  Reset e configurações globais
+    2.  Variáveis (cores, espaçamentos, tipografia)
+    3.  Layout geral (grid sidebar + conteúdo)
+    4.  Sidebar
+    5.  Topbar
+    6.  Botões
+    7.  Cards / Resumo financeiro
+    8.  Barra de progresso
+    9.  Gráfico (placeholder)
+    10. Painel de transações (tabs + filtros)
+    11. Tabela
+    12. Badges
+    13. Toggle (interruptor)
+    14. Utilitários
+    15. Acessibilidade (foco visível / motion)
+    16. Responsivo
+    17. Cotação (sidebar)
+    18. Painel de insights (IA)
+   ============================================================= */
+
+
+/* =============================================================
+    1. RESET E CONFIGURAÇÕES GLOBAIS
+   ============================================================= */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+button,
+input,
+select {
+    font: inherit;
+    color: inherit;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    background: none;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+ul {
+    list-style: none;
+}
+
+
+/* =============================================================
+   2. VARIÁVEIS
+   ============================================================= */
+
+:root {
+    /* Cores de marca */
+    --color-primary: #255DE1;
+    --color-primary-dark: #1748BC;
+    --color-primary-light: #EDF3FF;
+
+    /* Cores de estado financeiro */
+    --color-green: #16A34A;
+    --color-green-bg: #E7F8EE;
+    --color-red: #E53E3E;
+    --color-red-bg: #FDEBEB;
+    --color-blue: #3B82F6;
+    --color-blue-bg: #EAF1FE;
+    --color-purple: #8B5CF6;
+    --color-purple-bg: #F2EDFE;
+
+    /* Neutros */
+    --color-bg: #F5F6FA;
+    --color-surface: #FFFFFF;
+    --color-border: #E7E9F0;
+    --color-text: #1F2937;
+    --color-text-muted: #6B7280;
+    --color-text-faint: #9CA3AF;
+
+    /* Tipografia */
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.8125rem;
+    --font-size-md: 0.875rem;
+    --font-size-lg: 1rem;
+    --font-size-xl: 1.25rem;
+    --font-size-xxl: 1.75rem;
+
+    /* Espaçamentos */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+
+    /* Bordas */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-pill: 999px;
+
+    /* Sombra */
+    --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
+
+    /* Layout */
+    --sidebar-width: 240px;
+    --topbar-height: 64px;
+
+    /* Transições */
+    --transition-fast: 150ms ease;
+}
+
+
+/* =============================================================
+    3. LAYOUT GERAL
+   ============================================================= */
+
+body {
+    display: flex;
+    min-height: 100vh;
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    /* evita que a tabela estoure o grid */
+    margin-left: var(--sidebar-width);
+}
+
+.main {
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+
+/* =============================================================
+    4. SIDEBAR
+   ============================================================= */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    background: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-4);
+    overflow-y: auto;
+}
+
+.sidebar__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-2) var(--space-4);
+    font-weight: 700;
+    font-size: var(--font-size-lg);
+}
+
+.sidebar__logo {
+    color: var(--color-primary);
+}
+
+.sidebar__profile {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-2);
+    border-radius: var(--radius-md);
+}
+
+.sidebar__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.sidebar__avatar--small {
+    width: 28px;
+    height: 28px;
+}
+
+.sidebar__profile-name {
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+}
+
+.sidebar__profile-email {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+.sidebar__search {
+    margin: var(--space-3) 0;
+}
+
+.sidebar__search input {
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+}
+
+.sidebar__nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    flex: 1;
+}
+
+.sidebar__link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.sidebar__link:hover {
+    background: var(--color-bg);
+    color: var(--color-text);
+}
+
+.sidebar__link--active {
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+    font-weight: 600;
+}
+
+.sidebar__icon {
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar__footer {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-2);
+    border-top: 1px solid var(--color-border);
+    margin-top: var(--space-3);
+}
+
+.sidebar__footer-value {
+    margin-left: auto;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+}
+
+
+/* =============================================================
+    5. TOPBAR
+   ============================================================= */
+
+.topbar {
+    height: var(--topbar-height);
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: 0 var(--space-5);
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.topbar__title {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+}
+
+.topbar__search {
+    flex: 1;
+    max-width: 320px;
+    margin-left: var(--space-5);
+}
+
+.topbar__search input {
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+}
+
+.topbar__icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-bg);
+    display: grid;
+    place-items: center;
+}
+
+
+/* =============================================================
+    6. BOTÕES
+   ============================================================= */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.btn--primary {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.btn--primary:hover {
+    background: var(--color-primary-dark);
+}
+
+.btn--outline {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+}
+
+.btn--outline:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.btn--ghost {
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+}
+
+.btn--ghost:hover {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* =============================================================
+    7. CARDS / RESUMO FINANCEIRO
+   ============================================================= */
+
+.summary {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr;
+    gap: var(--space-4);
+}
+
+.card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    box-shadow: var(--shadow-card);
+}
+
+.card__label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.card__value {
+    font-size: var(--font-size-xxl);
+    font-weight: 700;
+    margin-top: var(--space-1);
+}
+
+.card__sublabel {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin-top: var(--space-1);
+}
+
+.card__account {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    margin-top: var(--space-3);
+}
+
+.card--balance .btn {
+    margin-top: var(--space-4);
+    width: 100%;
+    justify-content: center;
+}
+
+.info-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--color-border);
+    font-size: 10px;
+    display: grid;
+    place-items: center;
+}
+
+.summary__split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+}
+
+.summary__item-label {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-1);
+}
+
+.summary__item-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--font-size-xs);
+    margin-top: var(--space-1);
+    color: var(--color-text-muted);
+}
+
+
+/* =============================================================
+    8. BARRA DE PROGRESSO
+   ============================================================= */
+
+.progress {
+    height: 8px;
+    width: 100%;
+    background: var(--color-border);
+    border-radius: var(--radius-pill);
+    position: relative;
+    overflow: hidden;
+}
+
+.progress span {
+    display: block;
+    height: 100%;
+    border-radius: var(--radius-pill);
+}
+
+.progress--green span {
+    background: var(--color-green);
+}
+
+.progress--red span {
+    background: var(--color-red);
+}
+
+
+/* =============================================================
+    9. GRÁFICO (placeholder simples em CSS)
+   ============================================================= */
+
+.chart-placeholder {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--space-2);
+    height: 100px;
+    margin-top: var(--space-4);
+    position: relative;
+}
+
+.chart-bar {
+    flex: 1;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.chart-bar--top {
+    background: var(--color-green);
+}
+
+.chart-bar--bottom {
+    background: var(--color-red);
+    align-self: flex-start;
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+}
+
+.chart-months {
+    position: absolute;
+    bottom: -20px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+
+/* =============================================================
+    10. PAINEL DE TRANSAÇÕES (tabs + filtros)
+   ============================================================= */
+
+.panel {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+}
+
+.tabs {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+    overflow-x: auto;
+}
+
+.tab {
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    white-space: nowrap;
+}
+
+.tab:hover {
+    background: var(--color-bg);
+}
+
+.tab--active {
+    background: var(--color-primary);
+    color: #fff;
+    font-weight: 600;
+}
+
+.tab--month {
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.filters {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+}
+
+.filters select {
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+}
+
+.filters .btn {
+    margin-left: auto;
+}
+
+
+/* =============================================================
+    11. TABELA
+   ============================================================= */
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.table {
+    min-width: 950px;
+}
+
+.table th {
+    text-align: left;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    font-weight: 600;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.table td {
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+    font-size: var(--font-size-sm);
+    vertical-align: middle;
+}
+
+.table tbody tr {
+    transition: background var(--transition-fast);
+}
+
+.table tbody tr:hover {
+    background: var(--color-bg);
+}
+
+.table tfoot td {
+    font-weight: 700;
+    border-bottom: none;
+}
+
+.table__row--selected {
+    background: var(--color-primary-light);
+}
+
+.table__btn-excluir {
+    color: var(--color-text-faint);
+    font-size: var(--font-size-md);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+}
+
+.table__btn-excluir:hover {
+    color: var(--color-red);
+    background: var(--color-red-bg);
+}
+
+
+/* =============================================================
+    12. BADGES
+   ============================================================= */
+
+.badge {
+    display: inline-block;
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.badge--purple {
+    background: var(--color-purple-bg);
+    color: var(--color-purple);
+}
+
+.badge--blue {
+    background: var(--color-blue-bg);
+    color: var(--color-blue);
+}
+
+
+/* =============================================================
+    13. TOGGLE (interruptor)
+   ============================================================= */
+
+.toggle {
+    display: inline-block;
+    width: 36px;
+    height: 20px;
+    border-radius: var(--radius-pill);
+    background: var(--color-border);
+    position: relative;
+    transition: background var(--transition-fast);
+}
+
+.toggle::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform var(--transition-fast);
+}
+
+.toggle--on {
+    background: var(--color-green);
+}
+
+.toggle--on::after {
+    transform: translateX(16px);
+}
+
+
+/* =============================================================
+    14. UTILITÁRIOS
+   ============================================================= */
+
+.text-green {
+    color: var(--color-green);
+}
+
+.text-red {
+    color: var(--color-red);
+}
+
+
+/* =============================================================
+    15. ACESSIBILIDADE
+   ============================================================= */
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+
+/* =============================================================
+    16. RESPONSIVO
+   ============================================================= */
+
+@media (max-width: 1100px) {
+    .summary {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .card--result {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 900px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .content {
+        margin-left: 0;
+    }
+
+    .summary {
+        grid-template-columns: 1fr;
+    }
+
+    .summary__split {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 560px) {
+    .main {
+        padding: var(--space-3);
+    }
+
+    .topbar {
+        padding: 0 var(--space-3);
+    }
+
+    .topbar__search {
+        display: none;
+    }
+}
+
+
+/* =============================================================
+    17. COTAÇÃO (sidebar) — dado real vindo de GET /api/cotacao
+   ============================================================= */
+
+.sidebar__cotacao {
+    background: var(--color-bg);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    margin: var(--space-2) 0;
+}
+
+.sidebar__cotacao-title {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    font-weight: 600;
+    margin-bottom: var(--space-2);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.sidebar__cotacao-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--font-size-xs);
+    margin-top: var(--space-1);
+}
+
+
+/* =============================================================
+    18. PAINEL DE INSIGHTS (IA)
+   ============================================================= */
+
+.panel--insights {
+    padding: var(--space-4);
+}
+
+.insights__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+
+.insights__title {
+    font-weight: 700;
+    font-size: var(--font-size-md);
+}
+
+.insights__texto {
+    margin-top: var(--space-3);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+}
+
+.insights__texto--erro {
+    color: var(--color-red);
+}
+
+
+/* =============================================================
+    19. VIEWS (troca de tela pelo menu lateral)
+   ============================================================= */
+
+.view {
+    display: none;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.view--active {
+    display: flex;
+}
+
+.panel--pad {
+    padding: var(--space-4);
+}
+
+.panel__titulo {
+    font-weight: 700;
+    font-size: var(--font-size-md);
+    margin-bottom: var(--space-2);
+}
+
+.panel__subtitulo {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-4);
+    line-height: 1.6;
+}
+
+
+/* =============================================================
+    21. RELATÓRIOS
+   ============================================================= */
+
+.report-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.report-list__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.report-list__row {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--font-size-sm);
+}
+
+.report-list__bar-track {
+    height: 8px;
+    background: var(--color-border);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+}
+
+.report-list__bar-fill {
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: var(--radius-pill);
+}
+
+
+/* =============================================================
+    22. CONTATOS
+   ============================================================= */
+
+.contacts-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.contacts-list__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.contacts-list__name {
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+}
+
+.contacts-list__meta {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+
+/* =============================================================
+    23. ESTATÍSTICAS (grid de moedas)
+   ============================================================= */
+
+.currency-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+}
+
+.currency-card {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+}
+
+.currency-card__codigo {
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+}
+
+.currency-card__nome {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-2);
+}
+
+.currency-card__valor {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+}
+
+.currency-card__variacao {
+    font-size: var(--font-size-xs);
+    margin-top: var(--space-1);
+}
+
+
+/* =============================================================
+    24. IMPORTAÇÕES
+   ============================================================= */
+
+.import-input {
+    display: block;
+    margin-bottom: var(--space-3);
+}
+
+.import-resultado {
+    margin-top: var(--space-3);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+}
+
+.import-resultado--sucesso {
+    color: var(--color-green);
+}
+
+.import-resultado--erro {
+    color: var(--color-red);
+}
+
+
+/* =============================================================
+    25. INVESTIMENTOS
+   ============================================================= */
+
+.invest-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--space-3);
+    align-items: end;
+    margin-bottom: var(--space-4);
+}
+
+.invest-form label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+.invest-form input {
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+}
+
+.invest-form .btn {
+    height: 38px;
+}
+
+.invest-resultado {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+}
+
+.invest-resultado__card {
+    background: var(--color-bg);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+}
+
+.invest-resultado__label {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+.invest-resultado__valor {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    margin-top: var(--space-1);
+}
+
+.invest-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 180px;
+    overflow-x: auto;
+    padding-bottom: var(--space-2);
+}
+
+.invest-chart__bar-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 24px;
+    height: 100%;
+}
+
+.invest-chart__bar {
+    width: 14px;
+    background: var(--color-primary);
+    border-radius: 4px 4px 0 0;
+    min-height: 2px;
+}
+
+.invest-chart__label {
+    font-size: 9px;
+    color: var(--color-text-muted);
+    margin-top: var(--space-1);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+}

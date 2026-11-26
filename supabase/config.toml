@@ -1,0 +1,18 @@
+project_id = "fintheka"
+
+# Configuração local. Conferir os mesmos valores no Auth do projeto hospedado;
+# functions deploy não aplica estas opções ao servidor de autenticação.
+[auth]
+minimum_password_length = 12
+
+[auth.email]
+enable_confirmations = true
+double_confirm_changes = true
+secure_password_change = true
+
+# As funções validam a sessão com auth.getUser() no servidor.
+[functions.cotacoes]
+verify_jwt = false
+
+[functions.insights]
+verify_jwt = false

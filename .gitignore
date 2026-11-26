@@ -1,0 +1,33 @@
+# Dependências e resultados gerados
+node_modules/
+test-results/
+playwright-report/
+coverage/
+artifacts/
+.cache/
+.firebase/
+supabase/.temp/
+
+# Credenciais e cópias de dados
+.env
+.env.*
+!.env.example
+.aws/
+.supabase/
+backups/
+*.dump
+*.backup
+*.bak
+*.bak2
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Arquivos locais do sistema e ferramentas
+.agents/
+.codex/
+*.log
+.DS_Store
+Thumbs.db
+Desktop.ini
