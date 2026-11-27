@@ -57,7 +57,10 @@ test('pacote de ativação: SQL atômico, reaplicação, registros preservados e
 
 test('arquivos para colar no painel estão atualizados e não dependem de imports relativos', () => {
   for (const [file, content] of Object.entries(build())) {
-    assert.equal(fs.readFileSync(path.resolve(__dirname, '../supabase/ativacao', file), 'utf8'), content);
+    // O editor pode formatar a cópia TypeScript ao salvar, sem mudar seu código.
+    const actual = fs.readFileSync(path.resolve(__dirname, '../supabase/ativacao', file), 'utf8');
+    const normalize = (value) => file.endsWith('.ts') ? value.replace(/\s+/g, '') : value;
+    assert.equal(normalize(actual), normalize(content));
     if (file.endsWith('.ts')) {
       assert.ok(!/from ["']\.\.?\//.test(content));
       assert.equal((content.match(/import \{ createClient \}/g) || []).length, 1);

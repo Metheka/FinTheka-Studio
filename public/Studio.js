@@ -30,6 +30,16 @@ function navegarStudio(view, foco) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Todos os diálogos têm um fechamento visível; os botões ficam desabilitados
+    // junto ao formulário durante gravações, preservando as confirmações em curso.
+    document.querySelectorAll('dialog').forEach((dialog) => {
+        if (dialog.querySelector('#help-close')) return;
+        const close = document.createElement('button');
+        close.type = 'button'; close.className = 'topbar__icon-btn dialog-close';
+        close.setAttribute('aria-label', 'Fechar janela'); close.innerHTML = icone('close');
+        close.addEventListener('click', () => dialog.close());
+        (dialog.querySelector('form') || dialog).prepend(close);
+    });
     const hoje = new Date();
     $('data-painel').dateTime = dataLocal(hoje);
     $('data-painel').textContent = hoje.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' });

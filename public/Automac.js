@@ -221,7 +221,7 @@ function renderizarTransacoes(transacoes) {
             <td class="${t.valor < 0 ? "text-red" : "text-green"}">${formatarMoeda(t.valor)}</td>
             <td><span class="payment-badge">${iconePagamento(t.tipoPagamento)}<span>${escaparHtml(t.tipoPagamento)}</span></span></td>
             <td><span class="mobile-payment-status">${t.pago ? (t.valor < 0 ? 'Pago' : 'Recebido') : 'Pendente'}</span><span class="toggle ${t.pago ? "toggle--on" : ""}" role="switch" tabindex="0" aria-label="Marcar pagamento de ${escaparHtml(t.descricao)}" aria-checked="${t.pago ? "true" : "false"}"></span></td>
-            <td><button class="table__btn-excluir" aria-label="Excluir transação">${icone('trash')}</button></td>
+            <td><div class="table-actions"><button type="button" class="table__btn-editar" aria-label="Editar transação">Editar</button><button type="button" class="table__btn-excluir" aria-label="Excluir transação">${icone('trash')}</button></div></td>
         `;
 
         corpoTabela.appendChild(linha);
@@ -230,6 +230,7 @@ function renderizarTransacoes(transacoes) {
     ativarSelecaoDeLinhas();
     ativarToggles();
     ativarBotoesExcluir();
+    document.querySelectorAll('.table__btn-editar').forEach((button) => button.addEventListener('click', () => abrirFormularioNovaTransacao(button.closest('tr').dataset.id)));
 }
 
 function atualizarResumoTabela(transacoes) {
@@ -375,7 +376,7 @@ function ativarBotaoNovaTransacao() {
         document.getElementById("btn-nova-transacao-2"),
     ].filter(Boolean);
 
-    botoes.forEach((botao) => botao.addEventListener("click", abrirFormularioNovaTransacao));
+    botoes.forEach((botao) => botao.addEventListener("click", () => abrirFormularioNovaTransacao()));
     const dialog = $("transacao-dialog");
     const form = $("transacao-form");
     let salvando = null;
@@ -391,6 +392,8 @@ function ativarBotaoNovaTransacao() {
         }
         const sessaoFormulario = versaoSessao;
         const campos = Object.fromEntries(new FormData(form));
+        const idEdicao = form.dataset.transacaoId || null;
+        const dono = usuarioAtual.id;
         const valor = converterValor(campos.valor);
         if (!Number.isFinite(valor) || valor <= 0) {
             $("transacao-erro").textContent = "Digite um valor positivo com até duas casas decimais.";
@@ -399,11 +402,16 @@ function ativarBotaoNovaTransacao() {
         salvando = sessaoFormulario;
         form.querySelectorAll("button").forEach((b) => { b.disabled = true; });
         try {
-            await criarTransacao({ ...campos, valor: campos.tipo === "despesa" ? -valor : valor });
+            const dados = { ...campos, valor: campos.tipo === "despesa" ? -valor : valor };
+            if (idEdicao) {
+                const linha = validarTransacao(dados);
+                const { error } = await sb.from('transacoes').update({ ...linha, pago: campos.pago === 'on' }).eq('id', idEdicao).eq('usuario_id', dono).select('id').single();
+                if (error) throw error;
+            } else await criarTransacao(dados);
             if (sessaoFormulario !== versaoSessao) return;
             dialog.close();
             await carregarTransacoes();
-            if (sessaoFormulario === versaoSessao) notificar("Transação adicionada.");
+            if (sessaoFormulario === versaoSessao) notificar(idEdicao ? 'Transação atualizada.' : 'Transação adicionada.');
         } catch (erro) {
             if (sessaoFormulario !== versaoSessao) return;
             $("transacao-erro").textContent = mensagemGravacao(erro, "Não foi possível salvar. Confira a conexão antes de tentar novamente.");
@@ -414,11 +422,32 @@ function ativarBotaoNovaTransacao() {
     });
 }
 
-async function abrirFormularioNovaTransacao() {
+async function abrirFormularioNovaTransacao(id = null) {
+    if (!usuarioAtual) return;
+    const atual = id ? transacoesCache.find((t) => String(t.id) === String(id)) : null;
+    if (id && !atual) return;
     const form = $("transacao-form");
     form.reset();
-    form.elements.data.value = dataLocal();
+    delete form.dataset.transacaoId;
+    form.elements.tipoPagamento.querySelectorAll('[data-legado]').forEach((o) => o.remove());
+    $('transacao-titulo').textContent = atual ? 'Editar transação' : 'Nova transação';
+    form.elements.tipo.value = atual?.valor < 0 ? 'despesa' : 'receita';
+    form.elements.data.value = atual?.data || dataLocal();
     prepararCategoriasFormulario();
+    if (atual) {
+        form.dataset.transacaoId = String(atual.id);
+        form.elements.descricao.value = atual.descricao;
+        form.elements.valor.value = Math.abs(atual.valor).toFixed(2).replace('.', ',');
+        form.elements.recebidoDe.value = atual.recebidoDe;
+        form.elements.pago.checked = atual.pago;
+        if (![...form.elements.tipoPagamento.options].some((o) => o.value === atual.tipoPagamento)) {
+            const option = new Option(atual.tipoPagamento, atual.tipoPagamento);
+            option.dataset.legado = 'true'; form.elements.tipoPagamento.add(option);
+        }
+        form.elements.tipoPagamento.value = atual.tipoPagamento;
+        atualizarPagamentoFormulario();
+        selecionarCategoria(atual.categoria);
+    }
     $("transacao-erro").textContent = "";
     $("transacao-dialog").showModal();
 }

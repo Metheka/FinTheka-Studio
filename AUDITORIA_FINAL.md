@@ -1,5 +1,13 @@
 # Auditoria de conclusão do FinTheka Studio
 
+## Ajustes para apresentação — 27/11/2026
+
+O tema claro passou a usar fundo areia e superfícies creme, incluindo menu e cartão principal do simulador; o modo escuro foi preservado. Os diálogos de transações, Porquinho e conta receberam X de fechamento, desabilitado junto ao formulário durante gravações. A ajuda mantém seu fechamento existente.
+
+Cada transação agora tem “Editar”, com os campos originais preenchidos. Valor, descrição, categoria, data, contato, forma de pagamento, tipo e confirmação de pagamento são atualizados no mesmo registro, filtrando por ID e usuário. Formas de pagamento antigas são preservadas no formulário. Cancelar não grava; falha mantém o formulário aberto; trocar de conta limpa o identificador de edição. Nenhuma migração ou alteração remota foi necessária.
+
+Resultado final de `npm run check:local`: 155 testes aprovados (38 de lógica/banco/inicialização, 46 de segurança e 71 de navegador), com uma captura opcional pulada. Os cenários novos conferem edição sem duplicação, atualização dos totais, troca de categoria, cancelamento, persistência, campos legados e erro ao gravar. O fluxo com banco descartável também edita uma categoria. Foram inspecionados os tons claros em captura do navegador. Não foram editados registros reais do usuário.
+
 ## Nome da função publicada — 27/11/2026
 
 O autor informou a URL da função `quick-service` no projeto correto. A configuração `INSIGHTS_FUNCTION` passou a apontar para esse nome; Assistente IA e Gerar insight usam a configuração, preservando nomes e textos da interface. O ambiente isolado de testes mantém o nome interno `insights`. O diagnóstico remoto e o arquivo completo de publicação foram alinhados. O `config.toml` permite publicar `quick-service` reutilizando a fonte original.

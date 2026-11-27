@@ -30,7 +30,7 @@ Nesse caso abra `http://127.0.0.1:5001` e confira o redirecionamento do Auth par
 
 ## O que demonstrar
 
-1. Crie uma receita e uma despesa no mês atual e confirme o pagamento pelo controle da tabela.
+1. Crie uma receita e uma despesa no mês atual e confirme o pagamento pelo controle da tabela. Use **Editar** na linha para alterar descrição, valor, categoria, data, contato, pagamento ou tipo de lançamento; o registro é atualizado sem duplicação. O X fecha o formulário sem gravar.
 2. Mostre saldo, filtros, categorias, gráficos, relatórios e contatos gerados pelos registros.
 3. Importe um CSV e exporte os registros. Exemplo sem cabeçalho, com ponto e vírgula, data `AAAA-MM-DD` e valor negativo para despesa:
 

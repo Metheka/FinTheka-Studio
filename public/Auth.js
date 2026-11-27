@@ -186,6 +186,7 @@ function ativarAuth() {
             cacheCotacoes.clear();
             document.querySelectorAll('dialog[open]').forEach((dialog) => dialog.close());
             $("transacao-form").reset();
+            delete $("transacao-form").dataset.transacaoId;
             reiniciarCategoriasFormulario();
             limparPorquinhos();
             limparConversaIA();

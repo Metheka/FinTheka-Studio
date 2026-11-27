@@ -40,6 +40,14 @@ test('apresentação inteiramente local: conta, transações, metas, gráficos, 
   await page.locator('#transacao-form button[type=submit]').click();
   await expect(page.locator('#transacao-dialog')).not.toBeVisible();
   await expect(page.locator('#tabela-corpo')).toContainText('Salário da apresentação');
+  await page.locator('.table__btn-editar').click();
+  await page.locator('[name=valor]').fill('2500');
+  await page.locator('#categoria-criar').click();
+  await page.locator('#categoria-nova-nome').fill('Renda principal');
+  await page.locator('#categoria-confirmar').click();
+  await page.locator('#transacao-form button[type=submit]').click();
+  await expect(page.locator('#transacao-dialog')).not.toBeVisible();
+  await expect(page.locator('#tabela-corpo')).toContainText('Renda principal');
   await page.locator('#tabela-corpo [role=switch]').click();
   await expect(page.locator('#saldo-atual')).toContainText('2.500,00');
   await page.reload();

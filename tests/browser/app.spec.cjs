@@ -196,9 +196,9 @@ test('temas do simulador seguem o restante do site com cartoes brancos no claro'
     const cor = await page.locator('body').evaluate((el) => getComputedStyle(el).getPropertyValue('--color-bg').trim());
     await page.evaluate(() => navegarStudio('investimentos'));
     expect(await page.locator('body').evaluate((el) => getComputedStyle(el).getPropertyValue('--color-bg').trim())).toBe(cor);
-    if (tema === 'claro') await expect(page.locator('.sim-kpi--hero')).toHaveCSS('background-color','rgb(255, 255, 255)');
+    if (tema === 'claro') await expect(page.locator('.sim-kpi--hero')).toHaveCSS('background-color','rgb(242, 237, 228)');
     await page.evaluate(() => navegarStudio('inicio'));
-    if (tema === 'claro') await expect(page.locator('.portfolio-card')).toHaveCSS('background-color','rgb(255, 255, 255)');
+    if (tema === 'claro') await expect(page.locator('.portfolio-card')).toHaveCSS('background-color','rgb(242, 237, 228)');
   }
   expect(errors).toEqual([]);
 });
@@ -217,6 +217,56 @@ test('login real do SDK, totais de receitas/despesas e filtro de busca', async (
   await expect(page.locator('#tabela-corpo')).toContainText('Nenhuma transação');
   expect(errors).toEqual([]);
 });
+test('editar transação preserva identidade e pagamento, muda valor/categoria e permite cancelar', async ({ page }, testInfo) => {
+  const { calls, errors } = await setup(page, { rows: [transaction(1, 100, true)] });
+  let updateUrl;
+  page.on('request', (r) => { if (r.method() === 'PATCH' && r.url().includes('/transacoes')) updateUrl = r.url(); });
+  await page.locator('.table__btn-editar').click();
+  await expect(page.locator('#transacao-titulo')).toHaveText('Editar transação');
+  await expect(page.locator('[name=valor]')).toHaveValue('100,00');
+  await expect(page.locator('[name=pago]')).toBeChecked();
+  await expect(page.locator('[name=tipoPagamento]')).toHaveValue('Única');
+  await page.locator('[name=descricao]').fill('Salário atualizado');
+  await page.locator('[name=valor]').fill('2750,50');
+  await page.locator('#categoria-criar').click();
+  await page.locator('#categoria-nova-nome').fill('Salário do estágio');
+  await page.locator('#categoria-confirmar').click();
+  await page.locator('#transacao-form button[type=submit]').click();
+  await expect(page.locator('#transacao-dialog')).not.toBeVisible();
+  await expect(page.locator('#tabela-corpo')).toContainText('Salário atualizado');
+  await expect(page.locator('#tabela-corpo')).toContainText('Salário do estágio');
+  await expect(page.locator('#saldo-atual')).toContainText('2.750,50');
+  expect(calls.inserts).toBe(0); expect(calls.updates).toBe(1);
+  expect(new URL(updateUrl).searchParams.get('id')).toBe('eq.1');
+  expect(new URL(updateUrl).searchParams.get('usuario_id')).toBe(`eq.${user.id}`);
+  await page.locator('.table__btn-editar').click();
+  await page.locator('[name=descricao]').fill('Não salvar');
+  await page.locator('#transacao-dialog [aria-label="Fechar janela"]').click();
+  await expect(page.locator('#tabela-corpo')).not.toContainText('Não salvar');
+  await page.reload();
+  await expect(page.locator('#tabela-corpo')).toContainText('Salário atualizado');
+  await page.locator('#btn-nova-transacao').click();
+  await expect(page.locator('#transacao-titulo')).toHaveText('Nova transação');
+  await expect(page.locator('[name=descricao]')).toHaveValue('');
+  await page.locator('#transacao-dialog [aria-label="Fechar janela"]').click();
+  await page.screenshot({ path: testInfo.outputPath('transacoes-suave.png'), fullPage: true, animations: 'disabled' });
+  expect(errors).toEqual([]);
+});
+
+test('erro ao editar mantém formulário aberto sem alterar o registro', async ({ page }) => {
+  await setup(page, { rows: [transaction(1, -35, false)] });
+  await page.route('**/rest/v1/transacoes**', (route) => route.request().method() === 'PATCH' ? route.fulfill({ status: 400, json: { message: 'Falha de gravação' } }) : route.fallback());
+  await page.locator('.table__btn-editar').click();
+  await expect(page.locator('[name=tipo]')).toHaveValue('despesa');
+  await page.locator('[name=valor]').fill('42');
+  await page.locator('#transacao-form button[type=submit]').click();
+  await expect(page.locator('#transacao-erro')).toContainText('Não foi possível salvar');
+  await expect(page.locator('#transacao-dialog')).toBeVisible();
+  await expect(page.locator('#transacao-dialog [aria-label="Fechar janela"]')).toBeEnabled();
+  await page.locator('#transacao-dialog [aria-label="Fechar janela"]').click();
+  await expect(page.locator('#tabela-corpo')).toContainText('35,00');
+});
+
 test('formulário salva despesa, bloqueia clique repetido e atualiza pagamento/exclusão', async ({ page }) => {
   const { calls, errors } = await setup(page, { rows: [] });
   await page.locator('#btn-nova-transacao').click();
@@ -372,7 +422,7 @@ test('paleta marrom mantém registros longos dentro da tela do telefone nos dois
   for (const tema of ['escuro', 'claro']) {
     await page.evaluate((t) => aplicarTema(t), tema);
     const cor = await page.evaluate(() => getComputedStyle(document.body).getPropertyValue('--color-bg').trim());
-    expect(cor).toBe(tema === 'escuro' ? '#1c1714' : '#f0f2f4');
+    expect(cor).toBe(tema === 'escuro' ? '#1c1714' : '#ded7cb');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await expect(page.locator('#tabela-corpo img')).toHaveCount(0);
   }
