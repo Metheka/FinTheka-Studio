@@ -16,3 +16,11 @@ verify_jwt = false
 
 [functions.insights]
 verify_jwt = false
+
+# Nome já publicado no projeto; reutiliza o mesmo código da IA.
+[functions.quick-service]
+verify_jwt = false
+entrypoint = "./functions/insights/index.ts"
+
+[functions.excluir-conta]
+verify_jwt = false

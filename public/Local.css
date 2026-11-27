@@ -1,0 +1,6 @@
+.local-status { margin: 0; padding: 8px 16px; background: #173d32; color: #fff; font: 500 12px/1.5 system-ui, sans-serif; text-align: center; position: fixed; inset: 0 0 auto; z-index: 2000; }
+.modo-local { --local-top: 34px; padding-top: var(--local-top); }
+.modo-local .sidebar { top: var(--local-top); height: calc(100dvh - var(--local-top)); }
+.modo-local .auth { padding-top: var(--local-top); }
+.modo-local .topbar { top: var(--local-top); }
+@media (max-width: 600px) { .modo-local { --local-top: 52px; } }

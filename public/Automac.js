@@ -23,6 +23,7 @@
 // Guarda a última lista de transações carregada, pra outras telas
 // (relatórios, contatos, início) reaproveitarem sem pedir de novo.
 let transacoesCache = [];
+let erroCargaTransacoes = '';
 let versaoTransacoes = 0;
 let paginaTransacoes = 1;
 let transacoesFiltradas = [];
@@ -143,7 +144,6 @@ function irParaView(view, linkClicado) {
    ============================================================= */
 
 async function carregarTransacoes() {
-    const corpoTabela = document.getElementById("tabela-corpo");
     const usuarioId = usuarioAtual?.id;
     if (!usuarioId) return;
     const versao = ++versaoTransacoes;
@@ -163,6 +163,7 @@ async function carregarTransacoes() {
             if (data.length < 500) break;
         }
         transacoesCache = transacoes;
+        erroCargaTransacoes = '';
         atualizarFiltroCategorias();
         if ($('transacao-dialog').open) renderizarCategoriasFormulario();
 
@@ -174,14 +175,27 @@ async function carregarTransacoes() {
         if (versao !== versaoTransacoes || sessao !== versaoSessao) return;
         console.error(erro);
         const aviso = erro?.code === 'LIMITE_HISTORICO' ? 'Histórico acima do limite de 10.000 transações. Procure o suporte para organizar seus registros.' : '';
+        // Uma falha de atualização invalida também filtros, totais e relatórios.
+        // Dados antigos não podem reaparecer como se a consulta tivesse funcionado.
+        transacoesCache = [];
+        erroCargaTransacoes = aviso || 'Não foi possível carregar as transações. Tente de novo em instantes.';
+        atualizarFiltroCategorias();
+        aplicarFiltros();
+        renderizarRelatorios([]);
+        renderizarContatos([]);
         falhaPainel(aviso);
-        corpoTabela.innerHTML = `<tr><td colspan="8">${escaparHtml(aviso || 'Não foi possível carregar as transações. Tente de novo em instantes.')}</td></tr>`;
     }
 }
 
 function renderizarTransacoes(transacoes) {
     const corpoTabela = document.getElementById("tabela-corpo");
     corpoTabela.innerHTML = "";
+    if (erroCargaTransacoes) {
+        corpoTabela.innerHTML = `<tr><td colspan="8">${escaparHtml(erroCargaTransacoes)}</td></tr>`;
+        $('paginacao-info').textContent = 'Histórico indisponível';
+        $('pagina-anterior').disabled = $('proxima-pagina').disabled = true;
+        return;
+    }
     const paginas = Math.max(1, Math.ceil(transacoes.length / TAMANHO_PAGINA));
     paginaTransacoes = Math.min(paginaTransacoes, paginas);
     const inicio = (paginaTransacoes - 1) * TAMANHO_PAGINA;
@@ -219,6 +233,14 @@ function renderizarTransacoes(transacoes) {
 }
 
 function atualizarResumoTabela(transacoes) {
+    if (erroCargaTransacoes) {
+        for (const id of ['despesas-pagas', 'despesas-previstas', 'tabela-total', 'total-recebido', 'total-previsto', 'resultado-previsto', 'saldo-atual', 'previsao-mes', 'rodape-valor']) $(id).textContent = '--';
+        document.querySelectorAll('.progress--green span, .progress--red span').forEach((barra) => {
+            barra.style.width = '0%';
+            barra.textContent = '--';
+        });
+        return;
+    }
     // Previsto = tudo que está cadastrado. Recebido = só o que já está marcado como pago.
     const soma = (lista) => lista.reduce((s, t) => s + Math.round(t.valor * 100), 0) / 100;
     const previsto = soma(transacoes);
@@ -416,6 +438,10 @@ async function criarTransacao(dados) {
    ============================================================= */
 
 function renderizarRelatorios(transacoes) {
+    if (erroCargaTransacoes) {
+        for (const id of ['relatorio-composicao', 'relatorio-fluxo', 'relatorios-lista', 'relatorios-clientes']) $(id).textContent = 'Dados indisponíveis. Atualize as transações para tentar novamente.';
+        return;
+    }
     renderizarAnalisesRelatorios(transacoes);
     const listaCategorias = document.getElementById("relatorios-lista");
     const listaClientes = document.getElementById("relatorios-clientes");
@@ -473,6 +499,10 @@ function renderizarAgrupamento(container, grupos) {
 function renderizarContatos(transacoes) {
     const container = document.getElementById("contatos-lista");
     if (!container) return;
+    if (erroCargaTransacoes) {
+        container.textContent = 'Dados indisponíveis. Atualize as transações para tentar novamente.';
+        return;
+    }
 
     if (transacoes.length === 0) {
         container.innerHTML = "<p>Nenhum contato ainda — cadastre transações pra eles aparecerem aqui.</p>";
@@ -688,7 +718,7 @@ async function gerarInsight() {
     paragrafo.textContent = "Analisando suas transações...";
 
     try {
-        const { data: dados, error } = await sb.functions.invoke("insights");
+        const { data: dados, error } = await sb.functions.invoke(window.APP_CONFIG?.INSIGHTS_FUNCTION || 'insights');
         if (sessaoInsight !== versaoSessao) return;
         if (error) throw new Error(await mensagemFuncao(error, "Não foi possível gerar o insight agora."));
         if (!dados?.insight) throw new Error("O serviço de IA não retornou uma resposta.");

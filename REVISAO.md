@@ -1,5 +1,7 @@
 # Revisão do FinTheka Studio
 
+> A revisão consolidada de conclusão está em [AUDITORIA_FINAL.md](AUDITORIA_FINAL.md): 140 testes aprovados com capturas habilitadas, correções de dados antigos após falha de atualização e diagnóstico remoto ainda reprovado. A base técnica para a parte escrita está em [TCC.md](TCC.md). Os resultados das rodadas anteriores permanecem registrados abaixo.
+
 ## Credenciais e criptografia — 25/11/2026
 
 O aplicativo delega senhas ao Supabase Auth. Segundo a [documentação oficial de senhas](https://supabase.com/docs/guides/auth/password-security), o serviço armazena hashes bcrypt com salt; não há tabela própria de senhas no schema da aplicação. Hash de senha não é criptografia reversível. O cliente envia a senha ao endpoint HTTPS de autenticação, e a limpa do formulário após a tentativa. Não foi acessada a tabela privada de autenticação do projeto remoto para inspecionar hashes.

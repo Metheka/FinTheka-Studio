@@ -1,0 +1,10 @@
+.auth__card .auth-termos { display: flex; flex-direction: row; gap: 10px; align-items: flex-start; line-height: 1.6; }
+.auth__card .auth-termos[hidden] { display: none; }
+.auth__card .auth-termos input { width: 18px; height: 18px; min-height: 18px; margin-top: 3px; flex: 0 0 18px; }
+.auth-termos a, .conta-links a { text-decoration: underline; text-underline-offset: 3px; }
+.conta-dialog { width: min(94vw, 520px); }
+.conta-dialog label { margin-top: 18px; }
+.conta-aviso { margin: 18px 0; line-height: 1.7; color: var(--color-text-muted); }
+.conta-dialog .btn--danger { background: var(--color-red); color: var(--color-surface); }
+.conta-erro { color: var(--color-red); margin-top: 12px; }
+.conta-links { font-size: .8125rem; margin-top: 16px; display: flex; flex-wrap: wrap; gap: 12px; }

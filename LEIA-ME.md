@@ -1,5 +1,7 @@
 # FinTheka Studio: passo a passo (Supabase + Firebase Hosting)
 
+> **Apresentação local — 27/11/2026:** `npm start` serve o site no computador e usa o Supabase online original. O banco local fica desligado; só é ativado com `npm run start:local` para testes separados. Siga [APRESENTACAO_LOCAL.md](APRESENTACAO_LOCAL.md) para apresentar.
+
 > **Repositório independente:** a raiz agora contém diretamente `public/`, `supabase/`, `scripts/` e `tests/`. Não existe mais a pasta intermediária `Finanças Proget/fintheka/`. Execute os comandos nesta raiz; a entrada atual do repositório é [README.md](README.md). Referências antigas à pasta `fintheka` abaixo indicam esta mesma raiz. Os patches históricos foram arquivados fora do Git em `artifacts/source-backups/`.
 
 > **Segurança — 25/11/2026:** as correções locais acrescentam a quinta migração `202611250001_abuse_protection.sql`, limites de gravação e aprovação administrativa para IA/cotações. O deploy ainda depende de conexão administrativa. As instruções vigentes estão no início de [LANCAMENTO.md](LANCAMENTO.md) e [OPERACAO.md](OPERACAO.md); referências a quatro migrações abaixo são históricas. Backups antigos agora ficam em `artifacts/source-backups/`; patches históricos estão desativados.
@@ -30,7 +32,7 @@ O tema claro é o padrão para novas visitas; preferências já salvas são resp
 
 Em telas de até 650 pixels, o histórico aparece como cartões, com navegação inferior e formulário em painel inferior. No computador, o histórico mantém a tabela e o menu lateral. Os layouts mudam automaticamente conforme a largura disponível. Isso não altera as transações nem a forma de salvar dados. As ilustrações de cartões não identificam uma bandeira vinculada à conta.
 
-> **Atualização em 24/11/2026:** o roteiro vigente é [LANCAMENTO.md](LANCAMENTO.md), com quatro migrações obrigatórias. A revisão de segurança e as evidências estão em [REVISAO.md](REVISAO.md). Suporte exclusivo, backup/restauração e exclusão de contas estão em [OPERACAO.md](OPERACAO.md). A página `public/privacidade.html` ainda precisa do contato de suporte e dos prazos de retenção antes da abertura ao público.
+> **Preparação vigente:** o roteiro é [LANCAMENTO.md](LANCAMENTO.md), com cinco migrações obrigatórias. A revisão de segurança e as evidências estão em [REVISAO.md](REVISAO.md). Suporte exclusivo, backup/restauração e exclusão de contas estão em [OPERACAO.md](OPERACAO.md). A página `public/privacidade.html` ainda precisa do contato de suporte e dos prazos de retenção antes da abertura ao público.
 
 O simulador de planejamento usa `public/SimuladorCore.js` (cálculos), `public/Simulador.js` (interface) e `public/Simulador.css` (estilos). Ele funciona no navegador, sem enviar as hipóteses ou gravar transações. O detalhamento dos cálculos está na própria aba e em [REVISAO.md](REVISAO.md).
 
@@ -40,7 +42,7 @@ O simulador de planejamento usa `public/SimuladorCore.js` (cálculos), `public/S
 
 ## 1. Supabase (login + banco)
 1. Crie um projeto em supabase.com.
-2. **Somente em banco novo:** execute `supabase/schema.sql` e depois as quatro migrações do guia de lançamento. Em banco existente, execute apenas as migrações pendentes, na ordem do guia.
+2. **Somente em banco novo:** execute `supabase/schema.sql` e depois as cinco migrações do guia de lançamento. Em banco existente, execute apenas as migrações pendentes, na ordem do guia.
 3. **Authentication → Providers → Email**: deixe "Confirm email" LIGADO e senha mínima = 12. Confira SMTP, limites de autenticação e proteção contra abuso conforme o guia de operação.
 4. **Authentication → URL Configuration**: em Site URL e Redirect URLs coloque o endereço do seu site (ex.: `https://SEU-APP.web.app`) e, para testes, `http://localhost:5000`.
 5. **Project Settings → API**: copie a **URL** e a **anon key** para `public/config.js`. Nunca use a `service_role` no site.
@@ -55,7 +57,7 @@ supabase link --project-ref SEU_REF
 supabase functions deploy insights
 supabase functions deploy cotacoes
 ```
-Use a CLI Supabase instalada conforme a documentação do serviço. Configure os segredos no painel, antes de publicar: `GROQ_API_KEY`, `ALLOWED_ORIGIN` e a chave de cotações se exigida pelo provedor. Evite colocar segredos em comandos que ficam no histórico do terminal. Mantenha a conta Groq no Free, sem ativar faturamento pago. Nunca exponha a chave no chat ou no código público. A versão atual não usa Anthropic. Veja as quatro migrações obrigatórias, limites de uso e configuração completa em [LANCAMENTO.md](LANCAMENTO.md).
+Use a CLI Supabase instalada conforme a documentação do serviço. Configure os segredos no painel, antes de publicar: `GROQ_API_KEY`, `ALLOWED_ORIGIN` e a chave de cotações se exigida pelo provedor. Evite colocar segredos em comandos que ficam no histórico do terminal. Mantenha a conta Groq no Free, sem ativar faturamento pago. Nunca exponha a chave no chat ou no código público. A versão atual não usa Anthropic. Veja as cinco migrações obrigatórias, limites de uso e configuração completa em [LANCAMENTO.md](LANCAMENTO.md).
 
 ## 4. Seu usuário administrador
 Cadastre-se pelo site, confirme o e-mail e, no SQL Editor, rode:

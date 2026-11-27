@@ -1,5 +1,7 @@
 # Operação do FinTheka — 25/11/2026
 
+> **Modo local — 27/11/2026:** para instalação, backup, restauração e recuperação de senha do banco local, use [APRESENTACAO_LOCAL.md](APRESENTACAO_LOCAL.md). Este documento mantém as orientações dos serviços remotos.
+
 ## Proteção de abuso — aplicar a quinta migração
 
 As regras abaixo só entram em produção depois de aplicar `202611250001_abuse_protection.sql` e publicar as duas funções atualizadas. A implantação desta etapa ainda está pendente de conexão administrativa.
@@ -63,8 +65,8 @@ Referências: [segurança de senhas](https://supabase.com/docs/guides/auth/passw
 
 1. Receber o pedido no canal exclusivo. Confirmar o controle da conta por comunicação ao e-mail já cadastrado; nunca solicitar senha, token, chave de API ou código de recuperação. Não excluir contas com base apenas em nome ou captura de tela.
 2. Para fornecer cópia, consultar somente os registros do usuário confirmado. Entregar por canal privado com acesso restrito. Não enviar dump geral nem dados de outras pessoas. Registrar apenas o necessário para acompanhar a solicitação.
-3. Antes da exclusão, explicar a perda dos dados e confirmar a intenção do titular. No Supabase, localizar o UUID correto em Authentication → Users e usar a exclusão definitiva da conta. Não apagar somente a linha de `perfis`. As seis tabelas do aplicativo usam exclusão em cascata da identidade em `auth.users`.
-4. Conferir que perfil, transações, uso de IA, uso de cotações, porquinhos e movimentos daquele UUID desapareceram. Verificar que outra conta continua intacta. Ensaiar todo o procedimento com conta descartável antes de abrir ao público. Cópias de dados e testes de restauração devem incluir metas e movimentos; conversas da IA não possuem tabela no banco.
+3. Antes da exclusão, explicar a perda dos dados e confirmar a intenção do titular. No Supabase, localizar o UUID correto em Authentication → Users e usar a exclusão definitiva da conta. Não apagar somente a linha de `perfis`. As sete tabelas públicas do aplicativo e os contadores privados usam exclusão em cascata da identidade em `auth.users`.
+4. Conferir que perfil, transações, uso de IA, uso de cotações, porquinhos, movimentos, aprovações em `acessos_servicos` e contadores em `privado.limites_escrita` daquele UUID desapareceram. Verificar que outra conta continua intacta. Ensaiar todo o procedimento com conta descartável antes de abrir ao público. Cópias de dados e testes de restauração devem incluir metas e movimentos; conversas da IA não possuem tabela no banco.
 5. A exclusão de usuário não faz o JWT já emitido expirar instantaneamente. As funções verificam o usuário no servidor; as relações do banco impedem recriar registros para uma identidade removida. Ainda assim, verificar sessões e revogações no fluxo real. Ver [gerenciamento de usuários](https://supabase.com/docs/guides/auth/managing-user-data).
 6. Cópias antigas podem conter os dados até expirar a retenção. Em uma restauração, reaplicar exclusões confirmadas antes de reabrir o serviço. Guardar um registro mínimo e protegido das exclusões até expirar a última cópia aplicável, com prazo definido pelo responsável. Considerar também os logs e políticas dos provedores.
 

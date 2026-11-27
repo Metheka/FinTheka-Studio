@@ -1,5 +1,11 @@
 # Preparação para lançamento — atualização de 25/11/2026
 
+> **Conta e termos — 27/11/2026:** a sexta migração `202611270001_terms_acceptance.sql` registra os aceites dos novos cadastros. A nova função `excluir-conta` permite exclusão com senha e confirmação. Ative ambas conforme [CONTA_E_TERMOS.md](CONTA_E_TERMOS.md); elas não são publicadas pelo push no GitHub. Contas existentes são preservadas.
+
+> **Escopo atual — 27/11/2026:** o frontend será apresentado localmente, conectado ao Supabase online, sem publicar no Firebase. O procedimento está em [APRESENTACAO_LOCAL.md](APRESENTACAO_LOCAL.md). As etapas de banco e funções abaixo continuam relevantes para o backend usado na apresentação; publicar o Firebase fica para depois. O banco local de testes permanece opcional e desligado por padrão.
+
+**Última verificação consolidada:** [AUDITORIA_FINAL.md](AUDITORIA_FINAL.md). A versão corrigida passou em 34 testes de lógica/banco, 42 de segurança e 64 cenários de navegador com capturas. Tipos e auditoria npm passaram. O diagnóstico remoto continua reprovado: `insights` 404, `cotacoes` 503 sem sessão e quatro tabelas indisponíveis pela API. Os números nas seções de histórico abaixo correspondem às respectivas rodadas anteriores.
+
 ## Correções de segurança de 25/11 — implantação ainda pendente
 
 Também execute `npm run check:credentials`: o Firebase CLI agora tem uma checagem `predeploy` para configuração pública e formatos reconhecidos de segredos na pasta `public/`. O login exige uma página HTTPS fora do desenvolvimento local. Isso não configura o domínio, o certificado ou o Auth remoto; confirme HTTPS real e os cabeçalhos no domínio final antes de liberar. Consulte a seção de credenciais em [REVISAO.md](REVISAO.md) para os limites de armazenamento de sessão e criptografia.
@@ -28,12 +34,12 @@ Use Node 24 e execute `npm run check:release` para repetir os testes, checagem d
 
 ## 1. IA sem plano pago
 
-1. Crie uma conta no [Groq Console](https://console.groq.com/) no plano **Free**. Não ative o plano Developer nem faturamento pago. Confira o modelo `llama-3.1-8b-instant` e as cotas reais da conta em Limits.
+1. Crie uma conta no [Groq Console](https://console.groq.com/) e confira o plano e as cotas reais antes de utilizar. Para manter o ensaio sem cobrança, não ative faturamento pago. O código atual usa `openai/gpt-oss-20b`, hospedado na Groq; confira a permissão desse modelo em sua conta. Ele substitui o antigo `llama-3.1-8b-instant`, retirado dos planos Free/Developer em 16/08/2026, conforme [a Groq](https://console.groq.com/docs/deprecations). Para publicar pelo painel, use `supabase/ativacao/05-insights.ts` e siga o guia daquela pasta.
 2. Crie uma chave em API Keys. No painel Supabase do projeto `htueuvvndtlusfyaqlqa`, em Edge Functions → Secrets, salve **GROQ_API_KEY**. Não cole a chave no chat, no HTML ou em `public/config.js`.
 3. Se já existir `ANTHROPIC_API_KEY`, remova esse segredo quando confirmar que nenhuma outra função depende dele. A versão atual não usa Anthropic nem troca automaticamente de provedor.
 4. Confira os controles de dados da conta Groq e publique uma política de privacidade que explique o envio de totais financeiros. Prefira Zero Data Retention quando disponível e mantenha compartilhamento para treinamento desativado.
 
-Limites implementados: 3 tentativas/conta/24h, intervalo de 30 segundos, 100 tentativas/site/24h e até 200 tokens de saída por resposta. **Chat e Gerar insight compartilham a mesma cota**; cada resposta usa uma tentativa. A janela de 24 horas é móvel, sem reiniciar à meia-noite. Falhas do provedor também consomem uma tentativa. A cota do provedor pode ser menor; consulte o painel. Não há repetição automática da chamada.
+Limites implementados: 3 tentativas/conta/24h, intervalo de 30 segundos, 100 tentativas/site/24h e até 1.024 tokens de conclusão por resposta, incluindo o processamento interno do modelo, com esforço baixo. O processamento interno é excluído da resposta e o texto entregue ao aplicativo é limitado a 1.500 caracteres. **Chat e Gerar insight compartilham a mesma cota**; cada resposta usa uma tentativa. A janela de 24 horas é móvel, sem reiniciar à meia-noite. Falhas do provedor também consomem uma tentativa. A cota do provedor pode ser menor; consulte o painel. Não há repetição automática da chamada.
 
 O código não garante gratuidade se o proprietário ativar um plano pago. No Free, o provedor pode limitar ou interromper respostas. Contas novas também estão sujeitas à cota global; acompanhe o uso e proteja o cadastro contra abuso.
 
@@ -47,8 +53,9 @@ No SQL Editor, aplique nesta ordem as migrações pendentes:
 2. `supabase/migrations/202611120002_free_ai.sql`
 3. `supabase/migrations/202611240001_quotes_quota.sql`
 4. `supabase/migrations/202611240002_piggy_bank.sql`
+5. `supabase/migrations/202611250001_abuse_protection.sql`
 
-As quatro podem ser reaplicadas sem apagar transações. Não execute `schema.sql` novamente em banco existente. Em banco novo, execute o schema primeiro e depois as quatro migrações. A segunda ativa cotas da IA; a terceira cria o controle de cotações (30 consultas/conta e 300/site por minuto); a quarta cria os porquinhos, o histórico e a função transacional de movimentos. **Aplique a terceira antes de publicar `cotacoes` e a quarta antes de usar Porquinho.** Sem a terceira, cotações bloqueiam com 503. Sem a quarta, a tela do Porquinho explica que o serviço ainda precisa de ativação. Não reaplique os scripts históricos `aplicar-patch.js` ou `aplicar-patch-2.js`.
+Não execute `schema.sql` novamente em banco existente. Em banco novo, execute o schema primeiro e depois as cinco migrações. Em banco existente, confira o histórico e aplique somente as pendentes nessa ordem, após backup recuperável. A segunda ativa cotas da IA; a terceira cria o controle de cotações (30 consultas/conta e 300/site por minuto); a quarta cria os porquinhos, o histórico e a função transacional de movimentos; a quinta acrescenta limites de gravação e aprovação de contas. **As duas funções atuais exigem a quinta migração e a liberação explícita das contas em `acessos_servicos`.** Sem a quarta, a tela do Porquinho explica que o serviço ainda precisa de ativação. Não reaplique os scripts históricos `aplicar-patch.js` ou `aplicar-patch-2.js`.
 
 O Porquinho registra manualmente metas e valores guardados fora do site. Não há transferência bancária, rendimento ou alteração no saldo das transações. Saldo/histórico só mudam pela RPC `movimentar_cofrinho`, que identifica o dono pela sessão, bloqueia retiradas acima do saldo e aceita chave de repetição para não duplicar o mesmo pedido. Para ativar: aplicar a quarta migração no SQL Editor e atualizar a página. Testar com duas contas reais antes de abrir ao público.
 
@@ -57,7 +64,7 @@ O Porquinho registra manualmente metas e valores guardados fora do site. Não h�
 Com Supabase CLI instalado e autenticado, na pasta `fintheka`:
 
 ```powershell
-supabase functions deploy insights --project-ref htueuvvndtlusfyaqlqa
+supabase functions deploy quick-service --project-ref htueuvvndtlusfyaqlqa
 supabase functions deploy cotacoes --project-ref htueuvvndtlusfyaqlqa
 ```
 

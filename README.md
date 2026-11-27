@@ -1,8 +1,18 @@
 # FinTheka Studio
 
-Aplicação de gestão financeira com receitas, despesas, relatórios, metas de economia, simulador e assistente de IA. O frontend usa HTML, CSS e JavaScript; Supabase fornece autenticação, banco e Edge Functions; Firebase Hosting entrega o site.
+Aplicação de gestão financeira com receitas, despesas, relatórios, metas de economia, simulador e assistente. O frontend usa HTML, CSS e JavaScript. `npm start` serve o site no computador e mantém autenticação, banco e funções no Supabase online. O Firebase Hosting continua configurado para publicação futura.
+
+**Apresentação na escola:** siga [APRESENTACAO_LOCAL.md](APRESENTACAO_LOCAL.md). O banco local de testes está desligado por padrão; só é ativado com `npm run start:local`.
+
+**Termos e conta:** aceite obrigatório no cadastro e exclusão em “Minha conta”. A ativação da função e do registro de aceites no Supabase está descrita em [CONTA_E_TERMOS.md](CONTA_E_TERMOS.md).
+
+**Códigos para copiar no painel:** [supabase/ativacao/LEIA-ME.md](supabase/ativacao/LEIA-ME.md) reúne o SQL do Porquinho/controles, a liberação individual de cotações/IA e os arquivos completos das funções para o editor do Supabase.
+
+A função de IA publicada neste projeto chama-se `quick-service`, configurada em `public/config.js`. Esse nome é apenas interno; a interface continua mostrando Assistente IA e Gerar insight.
 
 Este repositório contém somente o FinTheka. Os arquivos do projeto ficam diretamente nesta raiz. Para trabalhar no VS Code, abra esta pasta ou `FinTheka.code-workspace`.
+
+**Revisão de conclusão de 25/11/2026:** 140 testes automatizados aprovados com capturas habilitadas, tipos das funções aprovados e nenhuma vulnerabilidade conhecida reportada pelo npm. O diagnóstico remoto continua reprovado. Veja [AUDITORIA_FINAL.md](AUDITORIA_FINAL.md) para correções, evidências e pendências, e [TCC.md](TCC.md) para a base da parte escrita.
 
 ## Executar localmente
 
@@ -13,14 +23,16 @@ npm ci
 npm start
 ```
 
-Abra `http://127.0.0.1:5000`. O login depende do projeto Supabase configurado em `public/config.js`. A chave publishable desse arquivo é pública; dados e operações são protegidos por autenticação, permissões e RLS no servidor.
+Abra `http://127.0.0.1:5000` e entre com sua conta do Supabase. Precisa de internet. Os registros existentes permanecem no banco online e aparecem ao entrar com a mesma conta, inclusive em outro computador. Uma conta nova começa com seus próprios registros; não recebe os dados de outras contas. O Supabase atualmente exige confirmação de e-mail para novos cadastros.
+
+O GitHub leva o código; o site usa o projeto Supabase definido em `public/config.js`. Não é necessário copiar ou recriar o banco para trocar de computador. A chave publishable desse arquivo é pública; as permissões e o RLS protegem o banco. `npm run start:remote` continua como alias do comportamento padrão. O modo isolado de testes usa `npm run start:local`, mantém contas separadas e não sincroniza com o Supabase.
 
 ## Estrutura
 
 | Pasta | Conteúdo |
 | --- | --- |
 | `public/` | Site e bibliotecas distribuídas com suas licenças |
-| `supabase/` | Schema, cinco migrações e funções de IA/cotações |
+| `supabase/` | Schema, seis migrações e funções de IA, cotações e exclusão da conta |
 | `scripts/` | Servidor local e verificações |
 | `tests/` | Testes de lógica, banco, segurança e navegador |
 
@@ -30,12 +42,13 @@ Dependências, caches, resultados de testes, capturas e backups locais são igno
 
 ```sh
 npm run check:credentials
+npm run check:local
 npm test
 npm run test:security
 npm run test:browser
 ```
 
-Os testes de navegador usam o Chrome instalado. `npm run check:edge-types` verifica as funções com Deno e pode precisar de rede. `npm run check:release` acrescenta verificações remotas; uma falha remota não é corrigida apenas publicando os arquivos no GitHub.
+Os testes de navegador usam o Chrome instalado. `npm run check:local` reúne as verificações necessárias ao modo local. `npm run check:edge-types` verifica as funções com Deno e pode precisar de rede. `npm run check:release` acrescenta verificações remotas; uma falha remota não é corrigida apenas publicando os arquivos no GitHub.
 
 ## GitHub e publicação do site
 

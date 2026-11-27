@@ -15,8 +15,11 @@ test('IA recebe apenas totais e contagens, sem textos, datas ou identificação'
     chamadas++;
     assert.equal(url, 'https://api.groq.com/openai/v1/chat/completions');
     const body = JSON.parse(opcoes.body);
-    assert.equal(body.model, 'llama-3.1-8b-instant');
-    assert.equal(body.max_completion_tokens, 200);
+    assert.equal(body.model, 'openai/gpt-oss-20b');
+    assert.equal(body.max_completion_tokens, 1024);
+    assert.equal(body.reasoning_effort, 'low');
+    assert.equal(body.include_reasoning, false);
+    assert.ok(!Object.hasOwn(body, 'reasoning_format'));
     assert.deepEqual(JSON.parse(body.messages[1].content), resumo);
     assert.ok(!/SEGREDO|PRIVADO|CHAVE-TESTE/.test(opcoes.body));
     assert.ok(opcoes.signal instanceof AbortSignal);

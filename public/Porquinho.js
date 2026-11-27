@@ -45,6 +45,10 @@ async function carregarCofrinhos() {
         renderizarPorquinhos();
     } catch (erro) {
         if (estado !== porquinhos || sessao !== versaoSessao || consulta !== estado.consulta) return;
+        estado.lista = [];
+        $('cofrinhos-lista').replaceChildren();
+        $('cofrinhos-total').textContent = '--';
+        $('cofrinhos-resumo').textContent = 'Metas indisponíveis no momento.';
         estado.disponivel = false; $('cofrinho-novo').disabled = true;
         $('cofrinhos-status').textContent = erro?.message === 'LIMITES_COFRINHOS' ? 'Sua conta ultrapassa o limite de 100 porquinhos. Procure o suporte para organizar suas metas.' : ['42P01','PGRST205'].includes(erro?.code) ? 'O Porquinho ainda precisa ser ativado no serviço. Suas metas estarão disponíveis após a configuração.' : 'Não foi possível carregar seus porquinhos. Tente Atualizar novamente.';
     }

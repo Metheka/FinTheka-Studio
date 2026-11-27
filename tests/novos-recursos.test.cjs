@@ -22,7 +22,8 @@ test('chat mantém resumo mínimo e limites de saída; erros do provedor não vi
   const resumo=resumirTransacoes([{valor:100,pago:true,descricao:'DESCRICAO PRIVADA',usuario_id:'IDENTIDADE PRIVADA'}]);
   const texto=await consultarConversa('chave-teste',resumo,[{role:'user',content:'Como organizar meu orçamento?'}],async (url,opts) => {
     assert.equal(opts.redirect,'error'); const body=JSON.parse(opts.body);
-    assert.equal(body.max_completion_tokens,200); assert.ok(!opts.body.includes('PRIVADA'));
+    assert.equal(body.max_completion_tokens,1024); assert.equal(body.model,'openai/gpt-oss-20b');
+    assert.equal(body.reasoning_effort,'low'); assert.equal(body.include_reasoning,false); assert.ok(!opts.body.includes('PRIVADA'));
     assert.ok(body.messages[1].content.includes('"receitas":100'));
     return Response.json({choices:[{message:{content:' Resposta de teste. '}}]});
   });

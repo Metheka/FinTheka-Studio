@@ -33,7 +33,7 @@ async function enviarMensagemIA(event) {
     $('ia-form').setAttribute('aria-busy', 'true'); $('ia-status').textContent = 'Pensando na sua pergunta...';
     $('ia-pergunta').value = ''; renderizarConversaIA(texto);
     try {
-        const { data, error } = await sb.functions.invoke('insights', { body: { mensagens } });
+        const { data, error } = await sb.functions.invoke(window.APP_CONFIG?.INSIGHTS_FUNCTION || 'insights', { body: { mensagens } });
         if (estado !== conversaIA || sessao !== versaoSessao) return;
         if (error) throw new Error(await mensagemFuncao(error, 'Não foi possível conversar com a IA agora.'));
         if (typeof data?.resposta !== 'string' || !data.resposta.trim()) throw new Error('O assistente precisa da versão atual do serviço para conversar.');

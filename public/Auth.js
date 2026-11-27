@@ -22,7 +22,8 @@ const sb = (() => {
             return null;
         }
         const config = window.APP_CONFIG;
-        if (!config || !/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(config.SUPABASE_URL) || !chavePublicaSupabase(config.SUPABASE_ANON_KEY)) {
+        const bancoLocal = local && config?.LOCAL_BACKEND === true && config.SUPABASE_URL === location.origin + '/local';
+        if (!config || (!bancoLocal && !/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(config.SUPABASE_URL)) || !chavePublicaSupabase(config.SUPABASE_ANON_KEY)) {
             erroInicializacaoAuth = 'Configuração de acesso inválida. O site precisa de uma chave pública do Supabase.';
             return null;
         }
@@ -66,6 +67,7 @@ function msg(texto, erro = true) {
 function mostrarModo(m) {
     if (authOcupado) return;
     $("auth-senha").value = "";
+    $("auth-termos").checked = false;
     modo = m;
     const c = MODOS[m];
     $("auth-titulo").textContent = c.titulo;
@@ -73,6 +75,8 @@ function mostrarModo(m) {
     $("auth-nome-label").hidden = !c.nome;
     $("auth-email-label").hidden = !c.email;
     $("auth-senha-label").hidden = !c.senha;
+    $("auth-termos-label").hidden = m !== 'cadastrar';
+    $("auth-termos").required = m === 'cadastrar';
     $("auth-trocar").textContent = c.trocar;
     $("auth-trocar").hidden = !c.trocar;
     $("auth-esqueci").hidden = m !== "entrar";
@@ -93,15 +97,21 @@ function ativarAuth() {
     });
     $("auth-esqueci").addEventListener("click", (e) => {
         e.preventDefault();
+        if (window.APP_CONFIG?.LOCAL_BACKEND) return msg('Para recuperar sua conta local, siga a seção de senha em APRESENTACAO_LOCAL.md. Não há envio de e-mail neste modo.');
         mostrarModo("recuperar");
     });
     $("btn-sair").addEventListener("click", async () => {
         $("btn-sair").disabled = true;
+        // SIGNED_OUT pode revelar o formulário antes de location.reload().
+        // Não aceitar credenciais no documento que está sendo encerrado.
+        const controlesAuth = [...$("auth-form").querySelectorAll('input, button')];
+        controlesAuth.forEach((controle) => { controle.disabled = true; });
         try {
             const { error } = await sb.auth.signOut({ scope: "local" });
             if (error) throw error;
             location.reload();
         } catch {
+            controlesAuth.forEach((controle) => { controle.disabled = false; });
             alert("Não foi possível encerrar a sessão. Tente novamente.");
         } finally { $("btn-sair").disabled = false; }
     });
@@ -118,17 +128,18 @@ function ativarAuth() {
         if (c.email && !/^\S+@\S+\.\S+$/.test(email)) return msg("Digite um e-mail válido.");
         if (c.senha && (modo === "entrar" ? !senha : senha.length < 12)) return msg("Confira a senha. Novas senhas precisam ter pelo menos 12 caracteres.");
         if (modo === "cadastrar" && !nome) return msg("Digite seu nome.");
+        if (modo === 'cadastrar' && !$("auth-termos").checked) return msg('Leia e aceite os Termos de Serviço para criar sua conta.');
 
         $("auth-enviar").disabled = true;
         authOcupado = true;
         try {
             if (modo === "entrar") {
                 const { error } = await sb.auth.signInWithPassword({ email, password: senha });
-                if (error) msg("E-mail ou senha incorretos.");
+                if (error) msg(error.code === 'email_not_confirmed' ? 'Confirme seu e-mail pelo link recebido antes de entrar.' : 'E-mail ou senha incorretos.');
             } else if (modo === "cadastrar") {
                 const { data, error } = await sb.auth.signUp({
                     email, password: senha,
-                    options: { data: { nome }, emailRedirectTo: URL_VOLTA },
+                    options: { data: { nome, termos_aceitos: true, termos_versao: VERSAO_TERMOS }, emailRedirectTo: URL_VOLTA },
                 });
                 if (error) msg("Não foi possível cadastrar. Confira os dados ou tente novamente mais tarde.");
                 else if (!data.session) msg("Enviamos um link de confirmação para o seu e-mail.", false);
@@ -156,6 +167,8 @@ function ativarAuth() {
     });
 
     mostrarModo(emRecuperacao ? "nova-senha" : "entrar");
+    // Não aceitar preenchimento antes de os scripts e os listeners estarem prontos.
+    $("auth-form").querySelectorAll('input, button').forEach((controle) => { controle.disabled = false; });
 
     sb.auth.onAuthStateChange((evento, sessao) => {
         if ((sessao?.user.id || null) !== idSessao) {
@@ -168,6 +181,7 @@ function ativarAuth() {
             appIniciado = false;
             iniciandoUsuario = null;
             transacoesCache = [];
+            erroCargaTransacoes = '';
             versaoTransacoes++;
             cacheCotacoes.clear();
             document.querySelectorAll('dialog[open]').forEach((dialog) => dialog.close());

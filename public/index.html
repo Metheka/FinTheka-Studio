@@ -11,6 +11,8 @@
         <link rel="stylesheet" href="Simulador.css">
         <link rel="stylesheet" href="NovosRecursos.css">
         <link rel="stylesheet" href="Profissional.css">
+        <link rel="stylesheet" href="Local.css">
+        <link rel="stylesheet" href="Conta.css">
         <title>FinTheka Studio · Seu espaço financeiro</title>
     </head>
     <body class="auth-pendente" data-view="inicio">
@@ -44,13 +46,14 @@
                         <p class="auth__intro">Seu espaço financeiro está aqui.</p>
                         <h1 class="auth__titulo" id="auth-titulo">Entrar</h1>
                     </div>
-                    <label id="auth-nome-label" hidden>Como podemos te chamar?<input id="auth-nome" type="text" placeholder="Seu nome" maxlength="100" autocomplete="name">
+                    <label id="auth-nome-label" hidden>Como podemos te chamar?<input id="auth-nome" type="text" placeholder="Seu nome" maxlength="100" autocomplete="name" disabled>
                     </label>
-                    <label id="auth-email-label">E-mail<input id="auth-email" type="email" placeholder="voce@exemplo.com" maxlength="254" autocomplete="email" inputmode="email">
+                    <label id="auth-email-label">E-mail<input id="auth-email" type="email" placeholder="voce@exemplo.com" maxlength="254" autocomplete="email" inputmode="email" disabled>
                     </label>
-                    <label id="auth-senha-label">Senha<input id="auth-senha" type="password" placeholder="Sua senha" maxlength="72" autocomplete="current-password">
+                    <label id="auth-senha-label">Senha<input id="auth-senha" type="password" placeholder="Sua senha" maxlength="72" autocomplete="current-password" disabled>
                     </label>
-                    <button class="btn btn--primary" id="auth-enviar" type="submit">Entrar</button>
+                    <label class="auth-termos" id="auth-termos-label" hidden><input id="auth-termos" type="checkbox" disabled><span>Li e aceito os <a href="termos.html" target="_blank" rel="noopener">Termos de Serviço</a> e li a <a href="privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a>.</span></label>
+                    <button class="btn btn--primary" id="auth-enviar" type="submit" disabled>Entrar</button>
                     <p class="auth__msg" id="auth-msg" role="alert"></p>
                     <div class="auth__links">
                         <a href="#" id="auth-trocar">Criar conta</a>
@@ -162,6 +165,7 @@
                 <div>
                     <p class="sidebar__profile-name" id="perfil-nome">--</p>
                     <p class="sidebar__profile-email" id="perfil-email"></p>
+                    <button type="button" class="link-button" id="btn-minha-conta">Minha conta</button>
                 </div>
             </div>
             <div class="sidebar__footer" hidden>
@@ -749,6 +753,7 @@
     <footer class="app-footer">
         <span>© 2026 FinTheka Studio. No seu ritmo.</span>
         <a href="privacidade.html">Privacidade e seus dados</a>
+        <a href="termos.html">Termos de Serviço</a>
         <span>
             <svg class="icon " aria-hidden="true">
                 <use href="icons.svg#lock"/>
@@ -762,6 +767,7 @@
     <a href="#ia" data-open-view="ia"><svg class="icon" aria-hidden="true"><use href="icons.svg#sparkles"/></svg><span>IA</span></a>
 </nav>
 </div>
+<dialog id="conta-dialog" class="transacao-dialog conta-dialog" aria-labelledby="conta-titulo"><form id="conta-form" novalidate><h2 id="conta-titulo">Minha conta</h2><p id="conta-email" class="dialog-subtitle"></p><div class="conta-links"><a href="termos.html" target="_blank" rel="noopener">Termos de Serviço</a><a href="privacidade.html" target="_blank" rel="noopener">Privacidade</a></div><h3>Excluir minha conta</h3><p class="conta-aviso">Esta ação é definitiva. Seu perfil, transações, porquinhos e históricos vinculados serão removidos do banco ativo. Exporte seus registros antes de continuar. Arquivos exportados e backups não são apagados por esta ação.</p><label>Sua senha atual<input id="conta-senha" type="password" maxlength="72" autocomplete="current-password" required></label><label>Digite EXCLUIR para confirmar<input id="conta-confirmacao" autocomplete="off" maxlength="7" required></label><p id="conta-erro" class="conta-erro" role="alert"></p><div class="dialog-acoes"><button type="button" class="btn btn--outline" id="conta-cancelar">Cancelar</button><button type="submit" class="btn btn--danger" id="conta-excluir">Excluir definitivamente</button></div></form></dialog>
 <dialog id="transacao-dialog" class="transacao-dialog" aria-labelledby="transacao-titulo">
     <form id="transacao-form">
         <div class="dialog-heading">
@@ -868,8 +874,10 @@
 </div>
 <script src="vendor/supabase.js" defer></script>
 <script src="config.js" defer></script>
+<script src="Local.js" defer></script>
 <script src="vendor/lightweight-charts.js" defer></script>
 <script src="Auth.js" defer></script>
+<script src="Conta.js" defer></script>
 <script src="Pagamentos.js" defer></script>
 <script src="Categorias.js" defer></script>
 <script src="Porquinho.js" defer></script>

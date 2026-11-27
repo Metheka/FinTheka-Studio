@@ -82,7 +82,7 @@ async function setup(page, { logged = true, rows = [transaction(1, 100, true), t
       if (req.postDataJSON()?.par) return reply({ historico: Array.from({ length: 30 }, (_, i) => ({ time: `2026-10-${String(i + 1).padStart(2, '0')}`, open: 5, high: 6, low: 4, close: 5 + i / 100 })) });
       return reply({ usd: 5, eur: 6, moedas: [{ codigo: 'USD', nome: 'Dólar', valor: 5, variacao: 1 }] });
     }
-    if (url.pathname.endsWith('/functions/v1/insights')) return reply({ code: 'NOT_FOUND' }, 404);
+    if (url.pathname.endsWith('/functions/v1/quick-service')) return reply({ code: 'NOT_FOUND' }, 404);
     return reply({ message: `Unhandled: ${method} ${url.pathname}` }, 404);
   });
   if (logged) await page.addInitScript((s) => localStorage.setItem('sb-htueuvvndtlusfyaqlqa-auth-token', JSON.stringify(s)), session);
@@ -119,7 +119,7 @@ test('segurança: limite do banco na importação explica a recusa e permite nov
 
 test('segurança: conta sem aprovação recebe orientação na IA sem inventar resposta', async ({ page }) => {
   await setup(page, { view: 'ia' });
-  await page.route('**/functions/v1/insights', (route) => route.fulfill({ status: 403, json: { erro: 'Sua conta ainda precisa de autorização para usar a IA.' } }));
+  await page.route('**/functions/v1/quick-service', (route) => route.fulfill({ status: 403, json: { erro: 'Sua conta ainda precisa de autorização para usar a IA.' } }));
   await page.locator('#ia-pergunta').fill('Como organizar meu orçamento?');
   await page.locator('#ia-enviar').click();
   await expect(page.locator('#ia-status')).toContainText('precisa de autorização');
@@ -448,7 +448,7 @@ test('reenvio de valor do Porquinho após perda de resposta mantém chave idempo
 test('aba IA conversa com contexto limitado, não renderiza HTML e permite nova conversa', async ({ page }) => {
   const { errors }=await setup(page,{view:'ia'});
   const pedidos=[];
-  await page.route('**/functions/v1/insights',async(route)=>{pedidos.push(route.request().postDataJSON()); await route.fulfill({json:{resposta:'Resposta de teste <img src=x onerror=alert(1)>'}});});
+  await page.route('**/functions/v1/quick-service',async(route)=>{pedidos.push(route.request().postDataJSON()); await route.fulfill({json:{resposta:'Resposta de teste <img src=x onerror=alert(1)>'}});});
   await page.locator('[data-ia-pergunta]').first().click();
   await page.locator('#ia-enviar').click();
   await expect(page.locator('.chat-message--user')).toHaveCount(1);
@@ -472,7 +472,7 @@ test('aba IA mostra ausência de publicação e limite sem fingir resposta da IA
   await expect(page.locator('#ia-status')).toContainText('ainda não foi publicado');
   await expect(page.locator('#ia-pergunta')).toHaveValue('Como organizar minhas despesas?');
   await expect(page.locator('.chat-message--user')).toHaveCount(0);
-  await page.route('**/functions/v1/insights',(route)=>route.fulfill({status:429,json:{erro:'Limite diário compartilhado atingido.'}}));
+  await page.route('**/functions/v1/quick-service',(route)=>route.fulfill({status:429,json:{erro:'Limite diário compartilhado atingido.'}}));
   await page.locator('#ia-enviar').click();
   await expect(page.locator('#ia-status')).toContainText('Limite diário');
   await expect(page.locator('#ia-enviar')).toBeEnabled();
@@ -484,7 +484,7 @@ test('troca de conta limpa metas e conversa e ignora resposta antiga da IA', asy
   await page.evaluate(()=>navegarStudio('ia'));
   let liberar,iniciada;
   const espera=new Promise((r)=>{liberar=r;}); const pedido=new Promise((r)=>{iniciada=r;});
-  await page.route('**/functions/v1/insights',async(route)=>{iniciada();await espera;await route.fulfill({json:{resposta:'RESPOSTA PRIVADA ANTIGA'}});});
+  await page.route('**/functions/v1/quick-service',async(route)=>{iniciada();await espera;await route.fulfill({json:{resposta:'RESPOSTA PRIVADA ANTIGA'}});});
   await page.locator('#ia-pergunta').fill('PERGUNTA PRIVADA DA CONTA A');
   await page.locator('#ia-enviar').click(); await pedido;
   await trocarConta(page);
@@ -591,7 +591,7 @@ test('menu acessível no celular e tema persistente', async ({ page }) => {
 test('IA mostra carregamento, impede chamadas repetidas e apresenta análise como texto', async ({ page }) => {
   await setup(page);
   let chamadas = 0;
-  await page.route('**/functions/v1/insights', async (route) => {
+  await page.route('**/functions/v1/quick-service', async (route) => {
     chamadas++;
     await new Promise((resolve) => setTimeout(resolve, 250));
     return route.fulfill({ json: { insight: 'Resumo: <img src=x onerror=alert(1)> Receitas maiores que despesas.' } });
@@ -606,7 +606,7 @@ test('IA mostra carregamento, impede chamadas repetidas e apresenta análise com
 
 test('IA explica limite gratuito e permite nova tentativa sem travar a tela', async ({ page }) => {
   await setup(page);
-  await page.route('**/functions/v1/insights', (route) => route.fulfill({ status: 429, json: { erro: 'A cota gratuita da IA foi atingida. Tente novamente mais tarde.' } }));
+  await page.route('**/functions/v1/quick-service', (route) => route.fulfill({ status: 429, json: { erro: 'A cota gratuita da IA foi atingida. Tente novamente mais tarde.' } }));
   await page.locator('#btn-gerar-insight').click();
   await expect(page.locator('#insight-texto')).toContainText('cota gratuita');
   await expect(page.locator('#btn-gerar-insight')).toBeEnabled();
@@ -654,13 +654,45 @@ test('painel vazio explica os próximos passos sem inventar gráficos ou resulta
 test('falha ao buscar transações permite recuperar o painel com nova tentativa', async ({ page }) => {
   let falhar = true;
   await setup(page, { view: 'inicio' });
+  await expect(page.locator('#overview-saldo')).toContainText('70,00');
   await page.route('**/rest/v1/transacoes**', (route) => falhar ? route.fulfill({ status: 503, json: { message: 'Indisponível' } }) : route.fallback());
   await page.evaluate(() => carregarTransacoes());
   await expect(page.locator('#balance-chart')).toContainText('Não foi possível carregar');
+  expect(await page.evaluate(() => transacoesCache.length)).toBe(0);
+  await page.evaluate(() => navegarStudio('transacoes'));
+  await page.locator('#busca-topo').fill('Item');
+  await expect(page.locator('#tabela-corpo')).toContainText('Não foi possível carregar');
+  await expect(page.locator('#saldo-atual')).toHaveText('--');
+  await expect(page.locator('#tabela-total')).toHaveText('--');
+  await page.evaluate(() => navegarStudio('relatorios'));
+  await expect(page.locator('#relatorios-lista')).toContainText('indisponíveis');
+  await expect(page.locator('#relatorio-fluxo')).toContainText('indisponíveis');
+  await page.evaluate(() => navegarStudio('contatos'));
+  await expect(page.locator('#contatos-lista')).toContainText('indisponíveis');
+  await page.evaluate(() => navegarStudio('inicio'));
   falhar = false;
   await page.locator('[data-retry-painel]').click();
   await expect(page.locator('#overview-saldo')).toContainText('70,00');
   await expect(page.locator('#balance-chart svg')).toBeVisible();
+  await page.evaluate(() => navegarStudio('transacoes'));
+  await expect(page.locator('#tabela-corpo tr')).toHaveCount(2);
+});
+
+test('falha ao atualizar porquinhos remove metas antigas e permite recuperar a lista', async ({ page }) => {
+  await setup(page, { view: 'porquinho', cofres: [{ id: 1, nome: 'Reserva antiga', meta: 100, saldo: 25, cor: 'rosa' }] });
+  await expect(page.locator('#cofrinhos-lista')).toContainText('Reserva antiga');
+  await page.route('**/rest/v1/cofrinhos**', route => route.fulfill({ status: 503, json: { message: 'Indisponível' } }));
+  await page.locator('#cofrinhos-recarregar').click();
+  await expect(page.locator('#cofrinhos-status')).toContainText('Não foi possível carregar', { timeout: 15000 });
+  await expect(page.locator('#cofrinhos-lista [data-cofrinho]')).toHaveCount(0);
+  await expect(page.locator('#cofrinhos-total')).toHaveText('--');
+  await expect(page.locator('#cofrinho-novo')).toBeDisabled();
+  expect(await page.evaluate(() => porquinhos.lista.length)).toBe(0);
+  await page.unroute('**/rest/v1/cofrinhos**');
+  await page.locator('#cofrinhos-recarregar').click();
+  await expect(page.locator('#cofrinhos-lista')).toContainText('Reserva antiga');
+  await expect(page.locator('#cofrinhos-total')).toContainText('25,00');
+  await expect(page.locator('#cofrinho-novo')).toBeEnabled();
 });
 
 test('ajuda acessível abre pelo teclado, fecha e restaura o foco', async ({ page }) => {
@@ -764,11 +796,79 @@ test('cadastro usa confirmação de e-mail e envia somente os metadados permitid
   await page.locator('#auth-nome').fill('Pessoa de teste');
   await page.locator('#auth-email').fill('teste@example.com');
   await page.locator('#auth-senha').fill('senha-ficticia-123');
+  await page.locator('#auth-termos').check();
   await page.locator('#auth-enviar').click();
   await expect(page.locator('#auth-msg')).toContainText('confirmação');
   await expect(page.locator('.content')).not.toBeVisible();
-  expect(pedido.data).toEqual({ nome: 'Pessoa de teste' });
+  expect(pedido.data).toEqual({ nome: 'Pessoa de teste', termos_aceitos: true, termos_versao: '2026-11-27' });
   expect(errors).toEqual([]);
+});
+
+test('login só permite preenchimento depois da inicialização dos scripts', async ({ page }) => {
+  let liberar;
+  const bloqueio = new Promise((resolve) => { liberar = resolve; });
+  await page.route('**/Auth.js', async (route) => { await bloqueio; await route.continue(); });
+  const navegacao = page.goto(appUrl);
+  try {
+    await expect(page.locator('#auth-email')).toBeDisabled();
+    await expect(page.locator('#auth-senha')).toBeDisabled();
+    await expect(page.locator('#auth-enviar')).toBeDisabled();
+  } finally { liberar(); await navegacao; }
+  await expect(page.locator('#auth-email')).toBeEnabled();
+  await expect(page.locator('#auth-enviar')).toBeEnabled();
+});
+
+test('cadastro exige aceite explícito e não reaproveita checkbox entre modos', async ({ page }) => {
+  await setup(page, { logged: false });
+  let requests = 0;
+  await page.route('**/auth/v1/signup**', (route) => { requests++; return route.fulfill({ json: { user, session: null } }); });
+  await page.locator('#auth-trocar').click();
+  await page.locator('#auth-nome').fill('Teste');
+  await page.locator('#auth-email').fill('teste@example.com');
+  await page.locator('#auth-senha').fill('senha-ficticia-123');
+  await page.locator('#auth-enviar').click();
+  await expect(page.locator('#auth-msg')).toContainText('aceite os Termos');
+  expect(requests).toBe(0);
+  await page.locator('#auth-termos').check();
+  await page.locator('#auth-trocar').click();
+  await expect(page.locator('#auth-termos-label')).not.toBeVisible();
+  await page.locator('#auth-trocar').click();
+  await expect(page.locator('#auth-termos')).not.toBeChecked();
+});
+
+test('exclusão não chama serviço sem confirmação e preserva conta se serviço falhar', async ({ page }) => {
+  await setup(page);
+  let requests = 0;
+  await page.route('**/functions/v1/excluir-conta', (route) => { requests++; return route.fulfill({ status: 503, json: { erro: 'Serviço temporariamente indisponível.' } }); });
+  await page.locator('#btn-minha-conta').click();
+  await page.locator('#conta-excluir').click();
+  await expect(page.locator('#conta-erro')).toContainText('EXCLUIR');
+  expect(requests).toBe(0);
+  await page.locator('#conta-senha').fill('senha-ficticia-123');
+  await page.locator('#conta-confirmacao').fill('EXCLUIR');
+  await page.locator('#conta-excluir').click();
+  await expect(page.locator('#conta-erro')).toContainText('indisponível');
+  await expect(page.locator('#conta-senha')).toHaveValue('');
+  await expect(page.locator('#perfil-nome')).toHaveText('Teste');
+  await page.locator('#conta-cancelar').click();
+  await expect(page.locator('#conta-dialog')).not.toBeVisible();
+});
+
+test('termos abrem sem login e cabem no celular', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 740 });
+  await page.goto(`${appUrl}/termos.html`);
+  await expect(page.getByRole('heading', { name: 'Termos de Serviço.', exact: true })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('login orienta confirmação de e-mail pendente no Supabase', async ({ page }) => {
+  await setup(page, { logged: false });
+  await page.route('**/auth/v1/token**', (route) => route.request().method() === 'OPTIONS' ? route.fallback() : route.fulfill({ status: 400, headers: { 'access-control-allow-origin': '*', 'access-control-expose-headers': 'x-supabase-api-version', 'x-supabase-api-version': '2024-01-01' }, json: { code: 'email_not_confirmed', msg: 'Email not confirmed' } }));
+  await page.locator('#auth-email').fill('teste@example.com');
+  await page.locator('#auth-senha').fill('senha-ficticia-123');
+  await page.locator('#auth-enviar').click();
+  await expect(page.locator('#auth-msg')).toContainText('Confirme seu e-mail');
+  await expect(page.locator('.content')).not.toBeVisible();
 });
 
 test('cadastro exige 12 caracteres antes de enviar nova senha', async ({ page }) => {
@@ -1015,7 +1115,7 @@ test('segurança: resposta de IA da conta anterior não libera o botão durante 
   await setup(page);
   const liberar = [];
   let chamadas = 0;
-  await page.route('**/functions/v1/insights', async (route) => {
+  await page.route('**/functions/v1/quick-service', async (route) => {
     const indice = chamadas++;
     await new Promise((resolve) => { liberar[indice] = resolve; });
     return route.fulfill({ headers: { 'x-fixture-step': String(indice) }, json: { insight: indice ? 'Análise da conta B' : 'Análise privada da conta A' } });
@@ -1027,7 +1127,7 @@ test('segurança: resposta de IA da conta anterior não libera o botão durante 
   await expect(page.locator('#btn-gerar-insight')).toBeEnabled();
   await page.locator('#btn-gerar-insight').click();
   await expect.poll(() => chamadas).toBe(2);
-  const primeira = page.waitForResponse((r) => r.url().includes('/functions/v1/insights') && r.headers()['x-fixture-step'] === '0');
+  const primeira = page.waitForResponse((r) => r.url().includes('/functions/v1/quick-service') && r.headers()['x-fixture-step'] === '0');
   liberar[0](); await primeira;
   await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   await expect(page.locator('#btn-gerar-insight')).toBeDisabled();
@@ -1118,9 +1218,16 @@ test('menu móvel mantém navegação por teclado dentro do menu e devolve foco 
   await page.locator('#btn-menu').click();
   await page.locator('.sidebar__brand').focus();
   await page.keyboard.press('Shift+Tab');
-  await expect(page.locator('#busca-lateral')).toBeFocused();
+  await expect(page.locator('#btn-minha-conta')).toBeFocused();
   await page.keyboard.press('Tab');
   await expect(page.locator('.sidebar__brand')).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#conta-dialog')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#conta-dialog')).not.toBeVisible();
+  await expect(page.locator('#btn-menu')).toBeFocused();
+  await page.locator('#btn-menu').click();
   await page.keyboard.press('Escape');
   await expect(page.locator('.sidebar')).not.toBeVisible();
   await expect(page.locator('#btn-menu')).toBeFocused();
@@ -1227,7 +1334,7 @@ test('capturas de revisão do Studio com dados exclusivamente simulados', async 
   await page.screenshot({ path: 'artifacts/redesign/16-porquinho-desktop.png', fullPage: true, animations: 'disabled' });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.screenshot({ path: 'artifacts/redesign/17-porquinho-celular.png', fullPage: true, animations: 'disabled' });
-  await page.route('**/functions/v1/insights',(route)=>route.fulfill({json:{resposta:'Defina uma meta que caiba no seu orçamento e registre o valor que conseguiu separar. Revise suas despesas e acompanhe seu progresso aos poucos. Esta é uma resposta simulada para revisão do layout.'}}));
+  await page.route('**/functions/v1/quick-service',(route)=>route.fulfill({json:{resposta:'Defina uma meta que caiba no seu orçamento e registre o valor que conseguiu separar. Revise suas despesas e acompanhe seu progresso aos poucos. Esta é uma resposta simulada para revisão do layout.'}}));
   await page.evaluate(() => { aplicarTema('claro'); navegarStudio('ia'); });
   await page.locator('#ia-pergunta').fill('Como posso planejar minha reserva de emergência?');
   await page.locator('#ia-enviar').click();

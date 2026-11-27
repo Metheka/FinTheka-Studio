@@ -4,7 +4,7 @@ const vm = require('node:vm');
 const path = require('node:path');
 const context = { window: {} };
 vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../public/config.js'), 'utf8'), context);
-const { SUPABASE_URL: base, SUPABASE_ANON_KEY: key } = context.window.APP_CONFIG;
+const { SUPABASE_URL: base, SUPABASE_ANON_KEY: key, INSIGHTS_FUNCTION: insightsFunction = 'insights' } = context.window.APP_CONFIG;
 const endpoints = [
   ['/auth/v1/settings', 'auth'],
   ['/rest/v1/transacoes?select=id&limit=1', 'private'],
@@ -16,7 +16,8 @@ const endpoints = [
   ['/rest/v1/acessos_servicos?select=usuario_id&limit=1', 'private'],
   ['/rest/v1/rpc/resumo_usuarios', 'private'],
   ['/functions/v1/cotacoes', 'function', 'POST'],
-  ['/functions/v1/insights', 'function', 'POST'],
+  [`/functions/v1/${insightsFunction}`, 'function', 'POST'],
+  ['/functions/v1/excluir-conta', 'function', 'POST'],
 ];
 (async () => {
   for (const [endpoint, type, method = 'GET'] of endpoints) {
